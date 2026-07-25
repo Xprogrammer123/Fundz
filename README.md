@@ -19,6 +19,8 @@ pnpm dev
 
 Open the URL Vite prints (usually `http://localhost:5173`).
 
+In-app docs: [/docs](http://localhost:5173/docs) · written guide: [docs/USER_GUIDE.md](docs/USER_GUIDE.md)
+
 ### Browser extension
 
 ```bash

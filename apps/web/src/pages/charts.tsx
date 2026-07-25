@@ -1,10 +1,13 @@
-import {
-  EChartsAreaChart,
-  type ChartConfig,
-} from "@/components/evilcharts/charts/echarts-area-chart";
-import { EChartsBarChart } from "@/components/evilcharts/charts/echarts-bar-chart";
-import { EChartsLineChart } from "@/components/evilcharts/charts/echarts-line-chart";
-import { EChartsPieChart } from "@/components/evilcharts/charts/echarts-pie-chart";
+import { AreaChartView } from "@/components/charts/area-view";
+import { BarChartView } from "@/components/charts/bar-view";
+import { ComposedChartView } from "@/components/charts/composed-view";
+import { LineChartView } from "@/components/charts/line-view";
+import { PieChartView } from "@/components/charts/pie-view";
+import { RadarChartView } from "@/components/charts/radar-view";
+import { RadialChartView } from "@/components/charts/radial-view";
+import { SankeyChartView } from "@/components/charts/sankey-view";
+import type { ChartViewProps } from "@/components/charts/types";
+import type { ChartConfig } from "@/components/evilcharts/ui/echarts-chart";
 import { useVault } from "@/db/vault";
 import { cn, formatMoney } from "@/lib/utils";
 import {
@@ -15,7 +18,7 @@ import {
   summarize,
   type PeriodGrain,
 } from "@funds/core";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ComponentType } from "react";
 
 const PALETTE = [
   "#2f6f5e",
@@ -28,8 +31,28 @@ const PALETTE = [
   "#3d5a80",
 ];
 
-type ChartType = "bar" | "line" | "area" | "pie";
+type ChartType =
+  | "bar"
+  | "line"
+  | "area"
+  | "pie"
+  | "composed"
+  | "radar"
+  | "radial"
+  | "sankey";
+
 type Metric = "expense" | "income" | "both" | "category";
+
+const CHART_TYPES: { id: ChartType; label: string }[] = [
+  { id: "bar", label: "Bar" },
+  { id: "line", label: "Line" },
+  { id: "area", label: "Area" },
+  { id: "pie", label: "Pie" },
+  { id: "composed", label: "Composed" },
+  { id: "radar", label: "Radar" },
+  { id: "radial", label: "Radial" },
+  { id: "sankey", label: "Sankey" },
+];
 
 const MONTH_LABELS: Record<string, string> = {
   "01": "January",
@@ -44,6 +67,17 @@ const MONTH_LABELS: Record<string, string> = {
   "10": "October",
   "11": "November",
   "12": "December",
+};
+
+const VIEW_MAP: Record<ChartType, ComponentType<ChartViewProps>> = {
+  bar: BarChartView,
+  line: LineChartView,
+  area: AreaChartView,
+  pie: PieChartView,
+  composed: ComposedChartView,
+  radar: RadarChartView,
+  radial: RadialChartView,
+  sankey: SankeyChartView,
 };
 
 export function ChartsPage() {
@@ -72,20 +106,14 @@ export function ChartsPage() {
     if (grain === "year") setMonth("all");
   }, [grain]);
 
-  useEffect(() => {
-    if (metric === "category" && chartType !== "pie" && chartType !== "bar") {
-      setChartType("pie");
-    }
-  }, [metric, chartType]);
-
   const months = useMemo(
-    () => (year !== "all" ? listMonthsForYear(transactions, year) : []),
+    () => (year !== "all" && year ? listMonthsForYear(transactions, year) : []),
     [transactions, year],
   );
 
   const filter = useMemo(
     () => ({
-      year: year === "all" ? null : year,
+      year: !year || year === "all" ? null : year,
       month: month === "all" ? null : month,
     }),
     [year, month],
@@ -106,7 +134,7 @@ export function ChartsPage() {
     [transactions, filter],
   );
 
-  const periodChartData = useMemo(
+  const periodData = useMemo(
     () =>
       buckets.map((b) => ({
         period: formatPeriodLabel(b.period, grain),
@@ -117,16 +145,16 @@ export function ChartsPage() {
     [buckets, grain],
   );
 
-  const singleSeriesData = useMemo(() => {
+  const singleData = useMemo(() => {
     const key = metric === "income" ? "income" : "expense";
-    return periodChartData.map((row) => ({
+    return periodData.map((row) => ({
       period: row.period,
       value: row[key],
     }));
-  }, [periodChartData, metric]);
+  }, [periodData, metric]);
 
   const seriesConfig = useMemo((): ChartConfig => {
-    if (metric === "both") {
+    if (metric === "both" || chartType === "composed" || chartType === "sankey") {
       return {
         income: {
           label: "Income",
@@ -147,14 +175,10 @@ export function ChartsPage() {
         },
       },
     };
-  }, [metric]);
+  }, [metric, chartType]);
 
   const categoryData = useMemo(
-    () =>
-      categories.map((c) => ({
-        category: c.category,
-        total: c.total,
-      })),
+    () => categories.map((c) => ({ category: c.category, total: c.total })),
     [categories],
   );
 
@@ -170,29 +194,36 @@ export function ChartsPage() {
     return config;
   }, [categoryData]);
 
-  const availableChartTypes: ChartType[] =
-    metric === "category" ? ["pie", "bar"] : ["bar", "line", "area", "pie"];
+  const subtitle = describeRange(year || "all", month, grain);
+  const View = VIEW_MAP[chartType];
+  const viewProps: ChartViewProps = {
+    periodData,
+    singleData,
+    categoryData,
+    seriesConfig,
+    categoryConfig,
+    metric,
+    subtitle,
+  };
 
   if (!txCount) {
     return (
       <div className="space-y-3">
         <h1 className="font-display text-3xl">Charts</h1>
         <p className="rounded-3xl border border-border/70 bg-white/55 p-8 text-sm text-muted-foreground backdrop-blur">
-          Import transactions to explore spending by day, month, or year.
+          Import transactions to explore spending by day, month, or year — then
+          export any chart as PNG/JPG.
         </p>
       </div>
     );
   }
-
-  const rangeLabel = describeRange(year, month, grain);
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="font-display text-3xl">Charts</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Choose chart type, time scale, and period — all computed on your
-          device.
+          Pick a chart style, filter the period, and export images locally.
         </p>
       </div>
 
@@ -216,7 +247,6 @@ export function ChartsPage() {
               value={grain}
               onChange={(e) => setGrain(e.target.value as PeriodGrain)}
               className="control"
-              disabled={metric === "category"}
             >
               <option value="day">Day</option>
               <option value="month">Month</option>
@@ -247,7 +277,7 @@ export function ChartsPage() {
               value={month}
               onChange={(e) => setMonth(e.target.value)}
               className="control"
-              disabled={grain === "year" || year === "all"}
+              disabled={grain === "year" || year === "all" || !year}
             >
               <option value="all">All months</option>
               {months.map((m) => (
@@ -264,22 +294,27 @@ export function ChartsPage() {
             Chart type
           </p>
           <div className="flex flex-wrap gap-2">
-            {availableChartTypes.map((type) => (
+            {CHART_TYPES.map((type) => (
               <button
-                key={type}
+                key={type.id}
                 type="button"
-                onClick={() => setChartType(type)}
+                onClick={() => setChartType(type.id)}
                 className={cn(
-                  "rounded-xl px-3 py-1.5 text-sm font-medium capitalize transition-colors",
-                  chartType === type
+                  "rounded-xl px-3 py-1.5 text-sm font-medium transition-colors",
+                  chartType === type.id
                     ? "bg-primary text-primary-foreground"
                     : "bg-muted text-muted-foreground hover:bg-sand",
                 )}
               >
-                {type}
+                {type.label}
               </button>
             ))}
           </div>
+          <p className="mt-2 text-xs text-muted-foreground">
+            Each chart type lives in its own file under{" "}
+            <code className="text-ink">src/components/charts/</code> so you can
+            paste EvilCharts style variants later.
+          </p>
         </div>
       </section>
 
@@ -287,12 +322,12 @@ export function ChartsPage() {
         <Stat
           label="Spending"
           value={formatMoney(totals.expense, currency)}
-          hint={rangeLabel}
+          hint={subtitle}
         />
         <Stat
           label="Income"
           value={formatMoney(totals.income, currency)}
-          hint={rangeLabel}
+          hint={subtitle}
         />
         <Stat
           label="Net"
@@ -301,73 +336,16 @@ export function ChartsPage() {
         />
       </section>
 
-      <section className="rounded-3xl border border-border/70 bg-white/55 p-4 backdrop-blur sm:p-6">
-        <h2 className="mb-1 font-display text-xl">
-          {metric === "category"
-            ? "Spending by category"
-            : metric === "both"
-              ? "Income vs spending"
-              : metric === "income"
-                ? "Income over time"
-                : "Spending over time"}
-        </h2>
-        <p className="mb-4 text-sm text-muted-foreground">{rangeLabel}</p>
+      <View {...viewProps} />
 
-        {metric === "category" ? (
-          categoryData.length ? (
-            chartType === "bar" ? (
-              <EChartsBarChart
-                data={categoryData}
-                config={{
-                  total: {
-                    label: "Spending",
-                    colors: { light: ["#c45c26"], dark: ["#e07a45"] },
-                  },
-                }}
-                className="h-80 w-full"
-                xDataKey="category"
-              >
-                <EChartsBarChart.Grid />
-                <EChartsBarChart.XAxis dataKey="category" />
-                <EChartsBarChart.YAxis />
-                <EChartsBarChart.Tooltip />
-                <EChartsBarChart.Bar dataKey="total" variant="gradient" />
-              </EChartsBarChart>
-            ) : (
-              <EChartsPieChart
-                data={categoryData}
-                config={categoryConfig}
-                className="h-80 w-full"
-                dataKey="total"
-                nameKey="category"
-              >
-                <EChartsPieChart.Legend isClickable />
-                <EChartsPieChart.Tooltip />
-                <EChartsPieChart.Pie isClickable />
-              </EChartsPieChart>
-            )
-          ) : (
-            <Empty />
-          )
-        ) : periodChartData.length ? (
-          <PeriodChart
-            chartType={chartType}
-            metric={metric}
-            data={periodChartData}
-            single={singleSeriesData}
-            config={seriesConfig}
-          />
-        ) : (
-          <Empty />
-        )}
-      </section>
-
-      {metric !== "category" && buckets.length > 0 ? (
+      {buckets.length > 0 ? (
         <section className="overflow-x-auto rounded-3xl border border-border/70 bg-white/55 backdrop-blur">
           <table className="min-w-full text-left text-sm">
             <thead className="bg-muted/70 text-xs uppercase tracking-wide text-muted-foreground">
               <tr>
-                <th className="px-4 py-3">{grain === "day" ? "Day" : grain === "month" ? "Month" : "Year"}</th>
+                <th className="px-4 py-3">
+                  {grain === "day" ? "Day" : grain === "month" ? "Month" : "Year"}
+                </th>
                 <th className="px-4 py-3 text-right">Income</th>
                 <th className="px-4 py-3 text-right">Spending</th>
                 <th className="px-4 py-3 text-right">Net</th>
@@ -394,181 +372,7 @@ export function ChartsPage() {
           </table>
         </section>
       ) : null}
-
-      {metric === "category" && categories.length > 0 ? (
-        <section className="overflow-x-auto rounded-3xl border border-border/70 bg-white/55 backdrop-blur">
-          <table className="min-w-full text-left text-sm">
-            <thead className="bg-muted/70 text-xs uppercase tracking-wide text-muted-foreground">
-              <tr>
-                <th className="px-4 py-3">Category</th>
-                <th className="px-4 py-3 text-right">Spending</th>
-              </tr>
-            </thead>
-            <tbody>
-              {categories.map((c) => (
-                <tr key={c.category} className="border-t border-border/50">
-                  <td className="px-4 py-3 font-medium">{c.category}</td>
-                  <td className="px-4 py-3 text-right text-ember">
-                    {formatMoney(c.total, currency)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </section>
-      ) : null}
     </div>
-  );
-}
-
-function PeriodChart({
-  chartType,
-  metric,
-  data,
-  single,
-  config,
-}: {
-  chartType: ChartType;
-  metric: Metric;
-  data: Array<{ period: string; income: number; expense: number; net: number }>;
-  single: Array<{ period: string; value: number }>;
-  config: ChartConfig;
-}) {
-  if (chartType === "pie") {
-    const pieRows =
-      metric === "both"
-        ? [
-            { name: "Income", total: data.reduce((s, r) => s + r.income, 0) },
-            { name: "Spending", total: data.reduce((s, r) => s + r.expense, 0) },
-          ]
-        : single.map((r) => ({ name: r.period, total: r.value }));
-
-    const pieConfig: ChartConfig = {};
-    pieRows.forEach((row, i) => {
-      const color = PALETTE[i % PALETTE.length]!;
-      pieConfig[row.name] = {
-        label: row.name,
-        colors: { light: [color], dark: [color] },
-      };
-    });
-
-    return (
-      <EChartsPieChart
-        data={pieRows}
-        config={pieConfig}
-        className="h-80 w-full"
-        dataKey="total"
-        nameKey="name"
-      >
-        <EChartsPieChart.Legend isClickable />
-        <EChartsPieChart.Tooltip />
-        <EChartsPieChart.Pie isClickable />
-      </EChartsPieChart>
-    );
-  }
-
-  if (metric === "both") {
-    if (chartType === "line") {
-      return (
-        <EChartsLineChart
-          data={data}
-          config={config}
-          className="h-80 w-full"
-          xDataKey="period"
-        >
-          <EChartsLineChart.Grid />
-          <EChartsLineChart.XAxis dataKey="period" />
-          <EChartsLineChart.YAxis />
-          <EChartsLineChart.Legend />
-          <EChartsLineChart.Tooltip />
-          <EChartsLineChart.Line dataKey="income" />
-          <EChartsLineChart.Line dataKey="expense" />
-        </EChartsLineChart>
-      );
-    }
-    if (chartType === "area") {
-      return (
-        <EChartsAreaChart
-          data={data}
-          config={config}
-          className="h-80 w-full"
-          xDataKey="period"
-        >
-          <EChartsAreaChart.Grid />
-          <EChartsAreaChart.XAxis dataKey="period" />
-          <EChartsAreaChart.YAxis />
-          <EChartsAreaChart.Legend />
-          <EChartsAreaChart.Tooltip />
-          <EChartsAreaChart.Area dataKey="income" variant="gradient" />
-          <EChartsAreaChart.Area dataKey="expense" variant="gradient" />
-        </EChartsAreaChart>
-      );
-    }
-    return (
-      <EChartsBarChart
-        data={data}
-        config={config}
-        className="h-80 w-full"
-        xDataKey="period"
-      >
-        <EChartsBarChart.Grid />
-        <EChartsBarChart.XAxis dataKey="period" />
-        <EChartsBarChart.YAxis />
-        <EChartsBarChart.Legend />
-        <EChartsBarChart.Tooltip />
-        <EChartsBarChart.Bar dataKey="income" variant="gradient" />
-        <EChartsBarChart.Bar dataKey="expense" variant="gradient" />
-      </EChartsBarChart>
-    );
-  }
-
-  if (chartType === "line") {
-    return (
-      <EChartsLineChart
-        data={single}
-        config={config}
-        className="h-80 w-full"
-        xDataKey="period"
-      >
-        <EChartsLineChart.Grid />
-        <EChartsLineChart.XAxis dataKey="period" />
-        <EChartsLineChart.YAxis />
-        <EChartsLineChart.Tooltip />
-        <EChartsLineChart.Line dataKey="value" />
-      </EChartsLineChart>
-    );
-  }
-
-  if (chartType === "area") {
-    return (
-      <EChartsAreaChart
-        data={single}
-        config={config}
-        className="h-80 w-full"
-        xDataKey="period"
-      >
-        <EChartsAreaChart.Grid />
-        <EChartsAreaChart.XAxis dataKey="period" />
-        <EChartsAreaChart.YAxis />
-        <EChartsAreaChart.Tooltip />
-        <EChartsAreaChart.Area dataKey="value" variant="gradient" />
-      </EChartsAreaChart>
-    );
-  }
-
-  return (
-    <EChartsBarChart
-      data={single}
-      config={config}
-      className="h-80 w-full"
-      xDataKey="period"
-    >
-      <EChartsBarChart.Grid />
-      <EChartsBarChart.XAxis dataKey="period" />
-      <EChartsBarChart.YAxis />
-      <EChartsBarChart.Tooltip />
-      <EChartsBarChart.Bar dataKey="value" variant="gradient" />
-    </EChartsBarChart>
   );
 }
 
@@ -606,14 +410,6 @@ function Stat({
       <p className="mt-2 font-display text-2xl text-ink">{value}</p>
       <p className="mt-1 text-xs text-muted-foreground">{hint}</p>
     </div>
-  );
-}
-
-function Empty() {
-  return (
-    <p className="py-12 text-center text-sm text-muted-foreground">
-      No transactions in this period. Try another year or month.
-    </p>
   );
 }
 

@@ -1,14 +1,22 @@
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { useVault } from "@/db/vault";
-import { formatMoney } from "@/lib/utils";
+import { cn, formatMoney } from "@/lib/utils";
 import {
   downloadBlob,
   transactionsToExcelBlob,
 } from "@funds/core";
 import { useMemo, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 export function TransactionsPage() {
   const { transactions, account, updateCategory, txCount } = useVault();
+  const location = useLocation();
+  const importedCount =
+    typeof location.state === "object" &&
+    location.state &&
+    "importedCount" in location.state
+      ? Number((location.state as { importedCount?: number }).importedCount)
+      : null;
   const [query, setQuery] = useState("");
 
   const filtered = useMemo(() => {
@@ -32,6 +40,21 @@ export function TransactionsPage() {
 
   return (
     <div className="space-y-6">
+      {importedCount != null && !Number.isNaN(importedCount) ? (
+        <div className="flex flex-col gap-3 rounded-3xl border border-moss/30 bg-leaf/15 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-ink">
+            Imported <strong>{importedCount}</strong> transactions into your
+            local vault.
+          </p>
+          <Link
+            to="/charts"
+            className={cn(buttonVariants({ size: "sm" }), "w-fit")}
+          >
+            View charts
+          </Link>
+        </div>
+      ) : null}
+
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="font-display text-3xl">Transactions</h1>

@@ -1,0 +1,53 @@
+import { ChartShell } from "@/components/charts/chart-shell";
+import type { ChartViewProps } from "@/components/charts/types";
+import { EChartsComposedChart } from "@/components/evilcharts/charts/echarts-composed-chart";
+
+/** Composed chart view — paste EvilCharts composed style variants here later. */
+export function ComposedChartView({
+  periodData,
+  seriesConfig,
+  metric,
+  subtitle,
+}: ChartViewProps) {
+  if (metric === "category") {
+    return (
+      <ChartShell title="Composed chart" subtitle={subtitle} filenameBase="funds-composed">
+        <p className="py-12 text-center text-sm text-muted-foreground">
+          Composed charts combine bars and lines over time. Switch to income vs spending.
+        </p>
+      </ChartShell>
+    );
+  }
+
+  const config = {
+    ...seriesConfig,
+    net: {
+      label: "Net",
+      colors: { light: ["#1a332b"], dark: ["#7dcea0"] },
+    },
+  };
+
+  return (
+    <ChartShell
+      title="Cash flow composed"
+      subtitle={subtitle}
+      filenameBase="funds-composed-cashflow"
+    >
+      <EChartsComposedChart
+        data={periodData}
+        config={config}
+        className="h-80 w-full"
+        xDataKey="period"
+      >
+        <EChartsComposedChart.Grid />
+        <EChartsComposedChart.XAxis dataKey="period" />
+        <EChartsComposedChart.YAxis />
+        <EChartsComposedChart.Legend />
+        <EChartsComposedChart.Tooltip />
+        <EChartsComposedChart.Bar dataKey="income" />
+        <EChartsComposedChart.Bar dataKey="expense" />
+        <EChartsComposedChart.Line dataKey="net" />
+      </EChartsComposedChart>
+    </ChartShell>
+  );
+}

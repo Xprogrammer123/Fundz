@@ -7,6 +7,7 @@ const links = [
   { to: "/import", label: "Import" },
   { to: "/transactions", label: "Transactions" },
   { to: "/charts", label: "Charts" },
+  { to: "/docs", label: "Docs" },
   { to: "/settings", label: "Settings" },
 ];
 

@@ -18,6 +18,7 @@ import {
 import * as pdfjs from "pdfjs-dist";
 import pdfWorkerUrl from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 import { useMemo, useState, type ChangeEvent } from "react";
+import { useNavigate } from "react-router-dom";
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfWorkerUrl;
 
@@ -33,6 +34,7 @@ const FIELD_KEYS = [
 
 export function ImportPage() {
   const { importRows } = useVault();
+  const navigate = useNavigate();
   const [filename, setFilename] = useState<string | null>(null);
   const [preview, setPreview] = useState<CsvPreview | null>(null);
   const [pdfRows, setPdfRows] = useState<NormalizedRow[] | null>(null);
@@ -126,10 +128,16 @@ export function ImportPage() {
         return;
       }
       const count = await importRows(filename, rows, format);
-      setMessage(`Imported ${count} transactions into your local vault.`);
+      setMessage(`Imported ${count} transactions. Opening transactions…`);
       setPreview(null);
       setPdfRows(null);
       setFilename(null);
+      window.setTimeout(() => {
+        navigate("/transactions", {
+          replace: false,
+          state: { importedCount: count },
+        });
+      }, 450);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Import failed");
     } finally {
