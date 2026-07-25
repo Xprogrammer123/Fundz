@@ -1,4 +1,4 @@
-import initSqlJs, { type Database, type SqlJsStatic } from "sql.js";
+import type { Database, SqlJsStatic } from "sql.js";
 import { createId } from "./id.js";
 import { loadDb, saveDb, wipeStoredDb } from "./persist.js";
 import type {
@@ -10,6 +10,21 @@ import type {
   NormalizedRow,
   Transaction,
 } from "./types.js";
+
+type InitSqlJs = (config?: {
+  locateFile?: (file: string) => string;
+}) => Promise<SqlJsStatic>;
+
+async function loadInitSqlJs(): Promise<InitSqlJs> {
+  // sql.js ships CJS (module.exports). Vite may expose it as default or as the
+  // module namespace itself depending on prebundling.
+  const mod = await import("sql.js");
+  const candidate = (mod as { default?: InitSqlJs }).default ?? mod;
+  if (typeof candidate !== "function") {
+    throw new Error("Failed to load sql.js initializer");
+  }
+  return candidate as InitSqlJs;
+}
 
 const SCHEMA = `
 CREATE TABLE IF NOT EXISTS meta (
@@ -63,9 +78,17 @@ export type SqlJsLocateFile = (file: string) => string;
 
 export function initSql(locateFile?: SqlJsLocateFile): Promise<SqlJsStatic> {
   if (!sqlPromise) {
-    sqlPromise = initSqlJs({
-      locateFile: locateFile ?? ((file) => `https://sql.js.org/dist/${file}`),
-    });
+    sqlPromise = loadInitSqlJs().then((initSqlJs) =>
+      initSqlJs({
+        locateFile:
+          locateFile ??
+          ((file) => {
+            // Prefer local public assets; fall back to CDN only if needed.
+            if (file.endsWith(".wasm")) return `/${file}`;
+            return `/${file}`;
+          }),
+      }),
+    );
   }
   return sqlPromise;
 }

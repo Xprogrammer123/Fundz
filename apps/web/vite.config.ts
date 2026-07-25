@@ -43,10 +43,15 @@ export default defineConfig({
         __dirname,
         "../../packages/banks/src/index.ts",
       ),
+      // Force the CJS build Vite can prebundle (browser export lacks ESM named/default).
+      "sql.js": path.resolve(__dirname, "node_modules/sql.js/dist/sql-wasm.js"),
     },
   },
   optimizeDeps: {
-    exclude: ["sql.js"],
+    // Prebundle so CJS `module.exports = initSqlJs` gets a proper ESM default.
+    include: ["sql.js"],
   },
   assetsInclude: ["**/*.wasm"],
 });
+
+

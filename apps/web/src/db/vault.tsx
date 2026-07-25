@@ -45,7 +45,11 @@ type VaultState = {
 const VaultContext = createContext<VaultState | null>(null);
 
 function locateFile(file: string): string {
-  if (file.endsWith(".wasm")) return `/${file}`;
+  // Browser build asks for sql-wasm-browser.wasm; node build asks for sql-wasm.wasm.
+  if (file.includes("sql-wasm")) {
+    if (file.includes("browser")) return "/sql-wasm-browser.wasm";
+    return "/sql-wasm.wasm";
+  }
   return `/${file}`;
 }
 
