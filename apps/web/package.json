@@ -12,11 +12,13 @@
   "dependencies": {
     "@base-ui/react": "^1.6.0",
     "@fontsource-variable/geist": "^5.3.0",
+    "@fontsource/architects-daughter": "^5.3.0",
     "@fontsource/archivo": "^5.3.0",
     "@fontsource/archivo-black": "^5.3.0",
     "@fontsource/dm-sans": "^5.3.0",
     "@fontsource/fraunces": "^5.3.0",
     "@fontsource/patrick-hand": "^5.3.0",
+    "@fontsource/syne": "^5.3.0",
     "@funds/banks": "workspace:*",
     "@funds/core": "workspace:*",
     "@tailwindcss/vite": "^4.1.11",

@@ -16,15 +16,13 @@ export function AppLayout() {
     <div className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col px-4 pb-24 pt-6 sm:px-6 lg:px-8">
       <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="font-display text-4xl tracking-tight text-ink sm:text-5xl">
-            Funds
-          </p>
-          <p className="mt-1 max-w-xl text-sm text-muted-foreground">
+          <p className="font-display text-4xl text-ink sm:text-5xl">Funds</p>
+          <p className="font-hand mt-2 max-w-xl text-lg text-ink-soft">
             Processing happens only on your device. We never receive your
             statements.
           </p>
         </div>
-        <nav className="flex flex-wrap gap-1 rounded-2xl border border-border/80 bg-white/50 p-1 backdrop-blur">
+        <nav className="flex flex-wrap gap-1 rounded-2xl border border-border/80 bg-mist/70 p-1 backdrop-blur">
           {links.map((link) => (
             <NavLink
               key={link.to}
@@ -35,7 +33,7 @@ export function AppLayout() {
                   "rounded-xl px-3 py-2 text-sm font-medium transition-colors",
                   isActive
                     ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                    : "text-muted-foreground hover:bg-sand/60 hover:text-foreground",
                 )
               }
             >

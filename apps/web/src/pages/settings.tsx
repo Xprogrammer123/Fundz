@@ -48,7 +48,7 @@ export function SettingsPage() {
         </p>
       </div>
 
-      <section className="rounded-3xl border border-border/70 bg-white/55 p-5 backdrop-blur">
+      <section className="panel p-5">
         <h2 className="font-medium">Privacy</h2>
         <p className="mt-2 text-sm text-muted-foreground">
           Funds is local-first. Statement parsing, SQLite storage, charts, and
@@ -65,7 +65,7 @@ export function SettingsPage() {
         </ul>
       </section>
 
-      <section className="rounded-3xl border border-border/70 bg-white/55 p-5 backdrop-blur">
+      <section className="panel p-5">
         <h2 className="font-medium">Passphrase</h2>
         <p className="mt-2 text-sm text-muted-foreground">
           Encrypt the IndexedDB vault with AES-GCM. Leave blank to store the DB
@@ -78,7 +78,7 @@ export function SettingsPage() {
             value={passphrase}
             onChange={(e) => setPassphrase(e.target.value)}
             placeholder="New passphrase"
-            className="w-full rounded-xl border border-border bg-white px-3 py-2 outline-none ring-ring focus:ring-2"
+            className="control"
           />
           <Button type="submit" disabled={busy}>
             {busy ? "Saving…" : "Update encryption"}
@@ -86,7 +86,7 @@ export function SettingsPage() {
         </form>
       </section>
 
-      <section className="rounded-3xl border border-destructive/30 bg-white/55 p-5 backdrop-blur">
+      <section className="panel border-destructive/30 p-5">
         <h2 className="font-medium text-destructive">Danger zone</h2>
         <p className="mt-2 text-sm text-muted-foreground">
           Permanently delete the local vault from this browser.
@@ -100,7 +100,7 @@ export function SettingsPage() {
         </Button>
       </section>
 
-      {message ? <p className="text-sm text-moss">{message}</p> : null}
+      {message ? <p className="font-hand text-lg text-ink-soft">{message}</p> : null}
     </div>
   );
 }

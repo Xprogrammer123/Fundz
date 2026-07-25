@@ -41,7 +41,7 @@ export function TransactionsPage() {
   return (
     <div className="space-y-6">
       {importedCount != null && !Number.isNaN(importedCount) ? (
-        <div className="flex flex-col gap-3 rounded-3xl border border-moss/30 bg-leaf/15 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 rounded-3xl border border-border/70 bg-mist/55 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-ink">
             Imported <strong>{importedCount}</strong> transactions into your
             local vault.
@@ -68,7 +68,7 @@ export function TransactionsPage() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search…"
-            className="rounded-xl border border-border bg-white/70 px-3 py-2 text-sm outline-none ring-ring focus:ring-2"
+            className="control text-sm"
           />
           <Button variant="outline" onClick={exportExcel} disabled={!transactions.length}>
             Export Excel
@@ -77,11 +77,11 @@ export function TransactionsPage() {
       </div>
 
       {!filtered.length ? (
-        <p className="rounded-3xl border border-border/70 bg-white/55 p-8 text-sm text-muted-foreground backdrop-blur">
+        <p className="panel p-8 text-sm text-muted-foreground">
           No transactions yet. Import a CSV to get started.
         </p>
       ) : (
-        <div className="overflow-x-auto rounded-3xl border border-border/70 bg-white/55 backdrop-blur">
+        <div className="panel overflow-x-auto">
           <table className="min-w-full text-left text-sm">
             <thead className="bg-muted/70 text-xs uppercase tracking-wide text-muted-foreground">
               <tr>
@@ -100,7 +100,7 @@ export function TransactionsPage() {
                     <input
                       defaultValue={t.category ?? ""}
                       placeholder="Uncategorized"
-                      className="w-36 rounded-lg border border-transparent bg-transparent px-2 py-1 hover:border-border focus:border-border focus:bg-white focus:outline-none"
+                      className="w-36 rounded-lg border border-transparent bg-transparent px-2 py-1 hover:border-border focus:border-border focus:bg-paper focus:outline-none"
                       onBlur={(e) => {
                         const next = e.target.value.trim() || null;
                         if (next !== (t.category ?? null)) {

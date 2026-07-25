@@ -21,7 +21,7 @@ export function OfflineBadge() {
   return (
     <div
       role="status"
-      className="mb-4 rounded-2xl border border-moss/30 bg-leaf/20 px-4 py-2 text-center text-sm text-ink"
+      className="font-hand mb-4 rounded-2xl border border-border/70 bg-mist/70 px-4 py-2 text-center text-base text-ink"
     >
       You are offline — Funds still works. Your vault stays on this device.
     </div>

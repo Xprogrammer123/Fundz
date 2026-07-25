@@ -155,7 +155,7 @@ export function ImportPage() {
         </p>
       </div>
 
-      <label className="flex cursor-pointer flex-col items-center justify-center rounded-3xl border border-dashed border-moss/40 bg-white/50 px-6 py-12 text-center backdrop-blur transition hover:border-moss hover:bg-white/70">
+      <label className="panel flex cursor-pointer flex-col items-center justify-center border-dashed px-6 py-12 text-center transition hover:border-ink-soft/40 hover:bg-mist/85">
         <span className="font-medium text-ink">Choose CSV or PDF file</span>
         <span className="mt-1 text-sm text-muted-foreground">
           {filename ?? "No file selected"}
@@ -174,7 +174,7 @@ export function ImportPage() {
           <a
             key={p.id}
             href={p.samplePath}
-            className="text-moss underline-offset-2 hover:underline"
+            className="text-ink-soft underline-offset-2 hover:underline"
             download
           >
             {p.name}
@@ -183,7 +183,7 @@ export function ImportPage() {
       </div>
 
       {pdfRows ? (
-        <div className="space-y-4 rounded-3xl border border-border/70 bg-white/55 p-5 backdrop-blur">
+        <div className="panel space-y-4 p-5">
           <p className="text-sm text-muted-foreground">
             PDF heuristic extracted {pdfRows.length} rows
             {detectedPreset ? ` · preset ${detectedPreset}` : ""}.
@@ -215,12 +215,12 @@ export function ImportPage() {
       ) : null}
 
       {preview ? (
-        <div className="space-y-4 rounded-3xl border border-border/70 bg-white/55 p-5 backdrop-blur">
+        <div className="panel space-y-4 p-5">
           <div className="flex flex-wrap items-end gap-3">
             <label className="text-sm">
               <span className="mb-1 block text-muted-foreground">Preset</span>
               <select
-                className="rounded-xl border border-border bg-white px-3 py-2"
+                className="control"
                 value={detectedPreset ?? ""}
                 onChange={(e) => e.target.value && applyPreset(e.target.value)}
               >
@@ -249,7 +249,7 @@ export function ImportPage() {
                   {key === "date" || key === "description" ? " *" : ""}
                 </span>
                 <select
-                  className="w-full rounded-xl border border-border bg-white px-3 py-2"
+                  className="control"
                   value={mapping[key] ?? ""}
                   onChange={(e) =>
                     setMapping((m) => ({
@@ -300,7 +300,7 @@ export function ImportPage() {
         </div>
       ) : null}
 
-      {message ? <p className="text-sm text-moss">{message}</p> : null}
+      {message ? <p className="font-hand text-lg text-ink-soft">{message}</p> : null}
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
     </div>
   );

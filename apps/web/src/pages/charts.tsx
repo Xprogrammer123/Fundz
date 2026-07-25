@@ -210,7 +210,7 @@ export function ChartsPage() {
     return (
       <div className="space-y-3">
         <h1 className="font-display text-3xl">Charts</h1>
-        <p className="rounded-3xl border border-border/70 bg-white/55 p-8 text-sm text-muted-foreground backdrop-blur">
+        <p className="panel p-8 text-sm text-muted-foreground">
           Import transactions to explore spending by day, month, or year — then
           export any chart as PNG/JPG.
         </p>
@@ -227,7 +227,7 @@ export function ChartsPage() {
         </p>
       </div>
 
-      <section className="space-y-4 rounded-3xl border border-border/70 bg-white/55 p-4 backdrop-blur sm:p-5">
+      <section className="panel space-y-4 p-4 sm:p-5">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Field label="What to show">
             <select
@@ -339,7 +339,7 @@ export function ChartsPage() {
       <View {...viewProps} />
 
       {buckets.length > 0 ? (
-        <section className="overflow-x-auto rounded-3xl border border-border/70 bg-white/55 backdrop-blur">
+        <section className="panel overflow-x-auto">
           <table className="min-w-full text-left text-sm">
             <thead className="bg-muted/70 text-xs uppercase tracking-wide text-muted-foreground">
               <tr>
@@ -403,7 +403,7 @@ function Stat({
   hint: string;
 }) {
   return (
-    <div className="rounded-3xl border border-border/70 bg-white/55 px-5 py-4 backdrop-blur">
+    <div className="panel px-5 py-4">
       <p className="text-xs uppercase tracking-wide text-muted-foreground">
         {label}
       </p>

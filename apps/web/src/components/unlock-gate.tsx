@@ -33,7 +33,7 @@ export function UnlockGate({ children }: { children: React.ReactNode }) {
     return (
       <div className="mx-auto flex min-h-dvh max-w-lg flex-col justify-center px-4">
         <h1 className="font-display text-5xl text-ink">Funds</h1>
-        <p className="mt-3 text-muted-foreground">
+        <p className="font-hand mt-3 text-xl text-ink-soft">
           A local-first statement analyzer. Your SQLite vault stays in this
           browser — nothing is uploaded.
         </p>
@@ -46,7 +46,7 @@ export function UnlockGate({ children }: { children: React.ReactNode }) {
               value={passphrase}
               onChange={(e) => setPassphrase(e.target.value)}
               placeholder="Leave blank for no encryption"
-              className="w-full rounded-xl border border-border bg-white/70 px-3 py-2 outline-none ring-ring focus:ring-2"
+              className="control"
             />
           </label>
           <Button type="submit" disabled={busy} className="w-full">
@@ -73,7 +73,7 @@ export function UnlockGate({ children }: { children: React.ReactNode }) {
   return (
     <div className="mx-auto flex min-h-dvh max-w-lg flex-col justify-center px-4">
       <h1 className="font-display text-5xl text-ink">Unlock</h1>
-      <p className="mt-3 text-muted-foreground">
+      <p className="font-hand mt-3 text-xl text-ink-soft">
         Enter the passphrase for the vault stored on this device.
       </p>
       <form onSubmit={onUnlock} className="mt-8 space-y-4">
@@ -84,7 +84,7 @@ export function UnlockGate({ children }: { children: React.ReactNode }) {
             autoComplete="current-password"
             value={passphrase}
             onChange={(e) => setPassphrase(e.target.value)}
-            className="w-full rounded-xl border border-border bg-white/70 px-3 py-2 outline-none ring-ring focus:ring-2"
+            className="control"
           />
         </label>
         <Button type="submit" disabled={busy} className="w-full">

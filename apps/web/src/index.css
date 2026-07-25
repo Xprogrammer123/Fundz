@@ -5,13 +5,13 @@
 
 @theme inline {
   --font-sans: "Archivo", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Archivo Black", "Archivo", ui-sans-serif, system-ui, sans-serif;
-  --font-hand: "Patrick Hand", "Comic Sans MS", cursive;
+  --font-display: "Syne", "Archivo Black", ui-sans-serif, system-ui, sans-serif;
+  --font-hand: "Architects Daughter", "Patrick Hand", cursive;
 
   --color-ink: #ffffff;
   --color-ink-soft: #d9e0e6;
-  --color-moss: #8ecae6;
-  --color-leaf: #a8dadc;
+  --color-moss: #a8c5d4;
+  --color-leaf: #c5d6e0;
   --color-mist: #293241;
   --color-paper: #001219;
   --color-sand: #3d4f63;
@@ -84,19 +84,26 @@
     margin: 0;
     font-family: var(--font-sans);
     color: var(--foreground);
-    background-color: var(--background);
+    background-color: #001219;
+    /* Dark crumpled paper + graph grid */
     background-image:
-      linear-gradient(rgb(41 50 65 / 0.45) 1px, transparent 1px),
-      linear-gradient(90deg, rgb(41 50 65 / 0.45) 1px, transparent 1px),
-      radial-gradient(circle at 18% 12%, rgb(255 255 255 / 0.04), transparent 32%),
-      radial-gradient(circle at 82% 0%, rgb(41 50 65 / 0.55), transparent 40%),
-      url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+      linear-gradient(rgb(41 50 65 / 0.55) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(41 50 65 / 0.55) 1px, transparent 1px),
+      radial-gradient(ellipse 120% 80% at 20% 15%, rgb(255 255 255 / 0.035), transparent 45%),
+      radial-gradient(ellipse 90% 70% at 85% 10%, rgb(41 50 65 / 0.45), transparent 50%),
+      radial-gradient(ellipse 70% 50% at 60% 90%, rgb(0 0 0 / 0.35), transparent 55%),
+      radial-gradient(ellipse 50% 40% at 10% 70%, rgb(0 0 0 / 0.28), transparent 50%),
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paper'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.16 0 0 0 0 0.20 0 0 0 0 0.25 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paper)'/%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='crumple'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.015' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeDiffuseLighting surfaceScale='3' diffuseConstant='1.1' lighting-color='%23ffffff'%3E%3CfeDistantLight azimuth='225' elevation='55'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23crumple)' opacity='0.07'/%3E%3C/svg%3E");
     background-size:
-      28px 28px,
-      28px 28px,
+      32px 32px,
+      32px 32px,
       100% 100%,
       100% 100%,
-      180px 180px;
+      100% 100%,
+      100% 100%,
+      220px 220px,
+      480px 480px;
     background-attachment: fixed;
   }
 
@@ -116,7 +123,8 @@
 @layer utilities {
   .font-display {
     font-family: var(--font-display);
-    letter-spacing: -0.03em;
+    font-weight: 800;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
   }
 
@@ -124,6 +132,7 @@
     font-family: var(--font-hand);
     letter-spacing: 0.01em;
     text-transform: none;
+    font-weight: 400;
   }
 }
 

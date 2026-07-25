@@ -33,7 +33,7 @@ export function ChartShell({
   }
 
   return (
-    <section className="rounded-3xl border border-border/70 bg-white/55 p-4 backdrop-blur sm:p-6">
+    <section className="panel p-4 sm:p-6">
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h2 className="font-display text-xl">{title}</h2>
@@ -54,7 +54,7 @@ export function ChartShell({
         {children}
       </div>
       {message ? (
-        <p className="mt-3 text-xs text-moss" role="status">
+        <p className="font-hand mt-3 text-sm text-ink-soft" role="status">
           {message}
         </p>
       ) : null}

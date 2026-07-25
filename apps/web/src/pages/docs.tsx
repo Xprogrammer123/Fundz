@@ -284,7 +284,7 @@ function Nav() {
   ] as const;
 
   return (
-    <nav className="flex flex-wrap gap-2 rounded-3xl border border-border/70 bg-white/55 p-3 text-sm backdrop-blur">
+    <nav className="panel flex flex-wrap gap-2 p-3 text-sm">
       {items.map(([href, label]) => (
         <a
           key={href}
@@ -310,7 +310,7 @@ function Section({
   return (
     <section id={id} className="scroll-mt-24 space-y-3">
       <h2 className="font-display text-2xl text-ink">{title}</h2>
-      <div className="space-y-3 text-sm leading-relaxed text-muted-foreground [&_a]:text-moss [&_a]:underline-offset-2 hover:[&_a]:underline [&_code]:rounded [&_code]:bg-muted [&_code]:px-1 [&_code]:py-0.5 [&_code]:text-ink [&_h3]:mt-4 [&_h3]:font-medium [&_h3]:text-ink [&_li]:ml-5 [&_li]:list-disc [&_ol]:list-decimal [&_ol_li]:ml-5 [&_pre]:overflow-x-auto [&_pre]:rounded-2xl [&_pre]:border [&_pre]:border-border [&_pre]:bg-ink [&_pre]:p-4 [&_pre]:text-leaf [&_strong]:text-ink">
+      <div className="space-y-3 text-sm leading-relaxed text-muted-foreground [&_a]:text-ink-soft [&_a]:underline-offset-2 hover:[&_a]:underline [&_code]:rounded [&_code]:bg-muted [&_code]:px-1 [&_code]:py-0.5 [&_code]:text-ink [&_h3]:mt-4 [&_h3]:font-medium [&_h3]:text-ink [&_li]:ml-5 [&_li]:list-disc [&_ol]:list-decimal [&_ol_li]:ml-5 [&_pre]:overflow-x-auto [&_pre]:rounded-2xl [&_pre]:border [&_pre]:border-border [&_pre]:bg-paper [&_pre]:p-4 [&_pre]:text-ink-soft [&_strong]:text-ink">
         {children}
       </div>
     </section>
