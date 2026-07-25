@@ -104,3 +104,23 @@
     font-family: var(--font-display);
   }
 }
+
+@layer components {
+  .control {
+    width: 100%;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border);
+    background: rgb(255 255 255 / 0.85);
+    padding: 0.5rem 0.75rem;
+    outline: none;
+  }
+
+  .control:focus {
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--ring) 45%, transparent);
+  }
+
+  .control:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}

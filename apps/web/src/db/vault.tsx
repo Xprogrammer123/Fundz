@@ -68,7 +68,7 @@ export function VaultProvider({ children }: { children: ReactNode }) {
   const hydrate = useCallback(async (instance: FundsDb) => {
     const acct = instance.ensureDefaultAccount("Primary");
     setAccount(acct);
-    setTransactions(instance.listTransactions(500, 0));
+    setTransactions(instance.listTransactions(50_000, 0));
     setTxCount(instance.countTransactions());
     setCashflow(instance.monthlyCashflow());
     setCategories(instance.categorySpend());
