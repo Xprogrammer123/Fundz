@@ -1,0 +1,16 @@
+Date,Description,Amount,Balance,Category
+2026-01-02,Salary Deposit,3200.00,5200.00,Income
+2026-01-03,Grocery Market,-84.12,5115.88,Groceries
+2026-01-05,Coffee Shop,-6.50,5109.38,Food
+2026-01-07,Rent Payment,-1400.00,3709.38,Housing
+2026-01-10,Transit Pass,-65.00,3644.38,Transport
+2026-01-12,Pharmacy,-22.40,3621.98,Health
+2026-01-15,Freelance Invoice,450.00,4071.98,Income
+2026-01-18,Streaming Service,-15.99,4055.99,Subscriptions
+2026-01-20,Utilities,-110.25,3945.74,Utilities
+2026-01-22,Restaurant,-48.00,3897.74,Food
+2026-02-01,Salary Deposit,3200.00,7097.74,Income
+2026-02-03,Grocery Market,-92.10,7005.64,Groceries
+2026-02-07,Rent Payment,-1400.00,5605.64,Housing
+2026-02-14,Bookstore,-28.00,5577.64,Shopping
+2026-02-20,Utilities,-108.50,5469.14,Utilities

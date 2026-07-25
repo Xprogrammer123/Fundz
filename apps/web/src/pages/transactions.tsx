@@ -1,0 +1,104 @@
+import { Button } from "@/components/ui/button";
+import { useVault } from "@/db/vault";
+import { formatMoney } from "@/lib/utils";
+import {
+  downloadBlob,
+  transactionsToExcelBlob,
+} from "@funds/core";
+import { useMemo, useState } from "react";
+
+export function TransactionsPage() {
+  const { transactions, account, updateCategory, txCount } = useVault();
+  const [query, setQuery] = useState("");
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return transactions;
+    return transactions.filter(
+      (t) =>
+        t.description.toLowerCase().includes(q) ||
+        (t.category ?? "").toLowerCase().includes(q) ||
+        t.date.includes(q),
+    );
+  }, [transactions, query]);
+
+  function exportExcel() {
+    const blob = transactionsToExcelBlob(transactions);
+    downloadBlob(
+      blob,
+      `funds-transactions-${new Date().toISOString().slice(0, 10)}.xlsx`,
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="font-display text-3xl">Transactions</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {txCount} rows in local vault
+            {account ? ` · ${account.currency}` : ""}
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search…"
+            className="rounded-xl border border-border bg-white/70 px-3 py-2 text-sm outline-none ring-ring focus:ring-2"
+          />
+          <Button variant="outline" onClick={exportExcel} disabled={!transactions.length}>
+            Export Excel
+          </Button>
+        </div>
+      </div>
+
+      {!filtered.length ? (
+        <p className="rounded-3xl border border-border/70 bg-white/55 p-8 text-sm text-muted-foreground backdrop-blur">
+          No transactions yet. Import a CSV to get started.
+        </p>
+      ) : (
+        <div className="overflow-x-auto rounded-3xl border border-border/70 bg-white/55 backdrop-blur">
+          <table className="min-w-full text-left text-sm">
+            <thead className="bg-muted/70 text-xs uppercase tracking-wide text-muted-foreground">
+              <tr>
+                <th className="px-4 py-3">Date</th>
+                <th className="px-4 py-3">Description</th>
+                <th className="px-4 py-3">Category</th>
+                <th className="px-4 py-3 text-right">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((t) => (
+                <tr key={t.id} className="border-t border-border/50">
+                  <td className="px-4 py-3 whitespace-nowrap">{t.date}</td>
+                  <td className="px-4 py-3 max-w-md truncate">{t.description}</td>
+                  <td className="px-4 py-3">
+                    <input
+                      defaultValue={t.category ?? ""}
+                      placeholder="Uncategorized"
+                      className="w-36 rounded-lg border border-transparent bg-transparent px-2 py-1 hover:border-border focus:border-border focus:bg-white focus:outline-none"
+                      onBlur={(e) => {
+                        const next = e.target.value.trim() || null;
+                        if (next !== (t.category ?? null)) {
+                          void updateCategory(t.id, next);
+                        }
+                      }}
+                    />
+                  </td>
+                  <td
+                    className={`px-4 py-3 text-right font-medium whitespace-nowrap ${
+                      t.amount < 0 ? "text-ember" : "text-moss"
+                    }`}
+                  >
+                    {formatMoney(t.amount, account?.currency ?? "USD")}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}

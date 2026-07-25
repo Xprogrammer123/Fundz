@@ -1,0 +1,45 @@
+{
+  "name": "@funds/web",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "tsc -b --noEmit",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@base-ui/react": "^1.6.0",
+    "@fontsource-variable/geist": "^5.3.0",
+    "@fontsource/dm-sans": "^5.3.0",
+    "@fontsource/fraunces": "^5.3.0",
+    "@funds/banks": "workspace:*",
+    "@funds/core": "workspace:*",
+    "@tailwindcss/vite": "^4.1.11",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "echarts": "^6.1.0",
+    "lucide-react": "^0.525.0",
+    "motion": "^12.42.2",
+    "pdfjs-dist": "^6.1.200",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "react-router-dom": "^7.7.1",
+    "shadcn": "^4.15.0",
+    "sql.js": "^1.13.0",
+    "tailwind-merge": "^3.3.1",
+    "tailwindcss": "^4.1.11",
+    "tw-animate-css": "^1.4.0",
+    "workbox-window": "^7.4.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.2",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.3",
+    "typescript": "~5.9.3",
+    "vite": "8",
+    "vite-plugin-pwa": "^1.0.2"
+  }
+}

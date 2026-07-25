@@ -1,0 +1,21 @@
+{
+  "name": "@funds/extension",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "tsc -b && vite build",
+    "lint": "tsc -b --noEmit"
+  },
+  "dependencies": {
+    "@funds/banks": "workspace:*",
+    "@funds/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.1.1",
+    "typescript": "~5.9.3",
+    "vite": "^8.0.0",
+    "vite-plugin-static-copy": "^3.1.1"
+  }
+}
