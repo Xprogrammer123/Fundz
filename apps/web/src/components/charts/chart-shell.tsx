@@ -29,17 +29,25 @@ export function ChartShell({
 }: ChartShellProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
-  function onExport(format: ImageFormat) {
+  async function onExport(format: ImageFormat) {
+    if (busy) return;
+    setBusy(true);
+    setMessage(null);
     const stamp = new Date().toISOString().slice(0, 10);
-    const ok = exportChartImage(
-      ref.current,
-      `${filenameBase}-${stamp}.${format === "jpeg" ? "jpg" : format}`,
-      format,
-      backgroundFill(background),
-    );
-    setMessage(ok ? `Saved ${format.toUpperCase()}.` : "Could not export.");
-    window.setTimeout(() => setMessage(null), 2500);
+    try {
+      const ok = await exportChartImage(
+        ref.current,
+        `${filenameBase}-${stamp}.${format === "jpeg" ? "jpg" : format}`,
+        format,
+        backgroundFill(background),
+      );
+      setMessage(ok ? `Exported ${format.toUpperCase()}.` : "Could not export.");
+    } finally {
+      setBusy(false);
+      window.setTimeout(() => setMessage(null), 2500);
+    }
   }
 
   return (
@@ -47,10 +55,22 @@ export function ChartShell({
       <div className="flex flex-wrap items-center justify-between gap-3">
         {title ? <h2 className="font-display text-xl text-ink">{title}</h2> : <span />}
         <div className="flex flex-wrap gap-2">
-          <Button type="button" variant="outline" size="sm" onClick={() => onExport("png")}>
-            Export PNG
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={busy}
+            onClick={() => void onExport("png")}
+          >
+            {busy ? "Exporting…" : "Export PNG"}
           </Button>
-          <Button type="button" variant="outline" size="sm" onClick={() => onExport("jpeg")}>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={busy}
+            onClick={() => void onExport("jpeg")}
+          >
             Export JPG
           </Button>
         </div>
