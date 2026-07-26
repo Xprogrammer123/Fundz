@@ -29,6 +29,8 @@ export function AreaChartView({
   styleId = "layers",
   background = "black",
   currency = "USD",
+  barColors,
+  remountKey,
 }: ChartViewProps) {
   const style = (
     ["layers", "compare", "benchmark", "spotlight"].includes(styleId)
@@ -36,9 +38,13 @@ export function AreaChartView({
       : "layers"
   ) as AreaStyle;
 
+  const incomeInk = barColors?.secondary ?? LAYER_COLORS.income;
+  const expenseInk = barColors?.primary ?? LAYER_COLORS.expense;
+  const valueInk = barColors?.primary ?? LAYER_COLORS.value;
+
   if (metric === "category") {
     return (
-      <ChartShell background={background} filenameBase="funds-area-category">
+      <ChartShell background={background} filenameBase="funds-area-category" remountKey={remountKey}>
         <p className="py-12 text-center text-sm text-muted-foreground">
           Switch to spending or income for area charts.
         </p>
@@ -47,7 +53,7 @@ export function AreaChartView({
   }
 
   return (
-    <ChartShell background={background} filenameBase={`funds-area-${metric}-${style}`}>
+    <ChartShell background={background} filenameBase={`funds-area-${metric}-${style}`} remountKey={remountKey}>
       {style === "layers" ? (
         <LayersStyle
           metric={metric}
@@ -55,10 +61,21 @@ export function AreaChartView({
           singleData={singleData}
           seriesConfig={seriesConfig}
           currency={currency}
+          incomeInk={incomeInk}
+          expenseInk={expenseInk}
+          valueInk={valueInk}
         />
       ) : null}
       {style === "compare" ? (
-        <CompareStyle metric={metric} periodData={periodData} singleData={singleData} currency={currency} />
+        <CompareStyle
+          metric={metric}
+          periodData={periodData}
+          singleData={singleData}
+          currency={currency}
+          incomeInk={barColors?.secondary ?? COMPARE_COLORS.income}
+          expenseInk={barColors?.primary ?? COMPARE_COLORS.expense}
+          valueInk={barColors?.primary ?? COMPARE_COLORS.value}
+        />
       ) : null}
       {style === "benchmark" ? (
         <BenchmarkStyle metric={metric} periodData={periodData} singleData={singleData} currency={currency} />
@@ -77,12 +94,18 @@ function LayersStyle({
   singleData,
   seriesConfig,
   currency,
+  incomeInk,
+  expenseInk,
+  valueInk,
 }: {
   metric: ChartViewProps["metric"];
   periodData: PeriodRow[];
   singleData: SingleSeriesRow[];
   seriesConfig: ChartConfig;
   currency: string;
+  incomeInk: string;
+  expenseInk: string;
+  valueInk: string;
 }) {
   const [selected, setSelected] = useState<string | null>(null);
 
@@ -92,13 +115,13 @@ function LayersStyle({
       {
         key: "income",
         label: "Income",
-        color: LAYER_COLORS.income,
+        color: incomeInk,
         latest: latest?.income ?? 0,
       },
       {
         key: "expense",
         label: "Spending",
-        color: LAYER_COLORS.expense,
+        color: expenseInk,
         latest: latest?.expense ?? 0,
       },
     ] as const;
@@ -106,11 +129,11 @@ function LayersStyle({
     const config = {
       income: {
         label: "Income",
-        colors: { light: [LAYER_COLORS.income], dark: [LAYER_COLORS.income] },
+        colors: { light: [incomeInk], dark: [incomeInk] },
       },
       expense: {
         label: "Spending",
-        colors: { light: [LAYER_COLORS.expense], dark: [LAYER_COLORS.expense] },
+        colors: { light: [expenseInk], dark: [expenseInk] },
       },
     } satisfies ChartConfig;
 
@@ -175,7 +198,7 @@ function LayersStyle({
 
   const latest = singleData[singleData.length - 1]?.value ?? 0;
   const label = metric === "income" ? "Income" : "Spending";
-  const color = LAYER_COLORS.value;
+  const color = valueInk;
 
   return (
     <div className="flex w-full flex-col">
@@ -210,11 +233,17 @@ function CompareStyle({
   periodData,
   singleData,
   currency,
+  incomeInk,
+  expenseInk,
+  valueInk,
 }: {
   metric: ChartViewProps["metric"];
   periodData: PeriodRow[];
   singleData: SingleSeriesRow[];
   currency: string;
+  incomeInk: string;
+  expenseInk: string;
+  valueInk: string;
 }) {
   if (metric === "both") {
     const first = periodData[0];
@@ -228,14 +257,14 @@ function CompareStyle({
       {
         key: "income",
         label: "Income",
-        color: COMPARE_COLORS.income,
+        color: incomeInk,
         pct: incomePct,
         delta: incomeDelta,
       },
       {
         key: "expense",
         label: "Spending",
-        color: COMPARE_COLORS.expense,
+        color: expenseInk,
         pct: expensePct,
         delta: expenseDelta,
       },
@@ -244,13 +273,13 @@ function CompareStyle({
     const config = {
       income: {
         label: "Income",
-        colors: { light: [COMPARE_COLORS.income], dark: [COMPARE_COLORS.income] },
+        colors: { light: [incomeInk], dark: [incomeInk] },
       },
       expense: {
         label: "Spending",
         colors: {
-          light: [COMPARE_COLORS.expense],
-          dark: [COMPARE_COLORS.expense],
+          light: [expenseInk],
+          dark: [expenseInk],
         },
       },
     } satisfies ChartConfig;
@@ -313,7 +342,7 @@ function CompareStyle({
   const delta = last - first;
   const pct = pctChange(first, last);
   const label = metric === "income" ? "Income" : "Spending";
-  const color = COMPARE_COLORS.value;
+  const color = valueInk;
 
   const config = {
     value: {

@@ -1,10 +1,10 @@
 import { ChartShell } from "@/components/charts/chart-shell";
+import { shortPeriodTick } from "@/components/charts/studio";
 import type { ChartViewProps, PeriodRow } from "@/components/charts/types";
 import {
   EChartsComposedChart,
   type ChartConfig,
 } from "@/components/evilcharts/charts/echarts-composed-chart";
-import { seriesColors } from "@/lib/mono";
 
 type ComposedStyle = "default" | "hatched" | "stripped" | "bump" | "spectrum";
 
@@ -36,6 +36,8 @@ export function ComposedChartView({
   metric,
   styleId = "default",
   background = "black",
+  barColors,
+  remountKey,
 }: ChartViewProps) {
   const style = (
     ["default", "hatched", "stripped", "bump", "spectrum"].includes(styleId)
@@ -45,7 +47,7 @@ export function ComposedChartView({
 
   if (metric === "category") {
     return (
-      <ChartShell background={background} filenameBase="funds-composed">
+      <ChartShell background={background} filenameBase="funds-composed" remountKey={remountKey}>
         <p className="py-12 text-center text-sm text-muted-foreground">
           Switch to income vs spending for composed charts.
         </p>
@@ -54,21 +56,21 @@ export function ComposedChartView({
   }
 
   return (
-    <ChartShell background={background} filenameBase={`funds-composed-${style}`}>
+    <ChartShell background={background} filenameBase={`funds-composed-${style}`} remountKey={remountKey}>
       {style === "default" ? (
         <DefaultStyle periodData={periodData} seriesConfig={seriesConfig} />
       ) : null}
       {style === "hatched" ? (
-        <PairStyle periodData={periodData} barVariant="hatched" />
+        <PairStyle periodData={periodData} barVariant="hatched" barColors={barColors} />
       ) : null}
       {style === "stripped" ? (
-        <PairStyle periodData={periodData} barVariant="stripped" />
+        <PairStyle periodData={periodData} barVariant="stripped" barColors={barColors} />
       ) : null}
       {style === "bump" ? (
-        <PairStyle periodData={periodData} curveType="bump" />
+        <PairStyle periodData={periodData} curveType="bump" barColors={barColors} />
       ) : null}
       {style === "spectrum" ? (
-        <PairStyle periodData={periodData} spectrum />
+        <PairStyle periodData={periodData} spectrum barColors={barColors} />
       ) : null}
     </ChartShell>
   );
@@ -82,23 +84,15 @@ function DefaultStyle({
   periodData: PeriodRow[];
   seriesConfig: ChartConfig;
 }) {
-  const config = {
-    ...seriesConfig,
-    net: {
-      label: "Net",
-      colors: seriesColors("net"),
-    },
-  };
-
   return (
     <EChartsComposedChart
       data={periodData}
-      config={config}
+      config={seriesConfig}
       className="h-80 w-full"
       xDataKey="period"
     >
       <EChartsComposedChart.Grid />
-      <EChartsComposedChart.XAxis dataKey="period" />
+      <EChartsComposedChart.XAxis dataKey="period" tickFormatter={shortPeriodTick} />
       <EChartsComposedChart.YAxis />
       <EChartsComposedChart.Legend />
       <EChartsComposedChart.Tooltip />
@@ -118,11 +112,13 @@ function PairStyle({
   barVariant,
   curveType,
   spectrum,
+  barColors,
 }: {
   periodData: PeriodRow[];
   barVariant?: "hatched" | "stripped";
   curveType?: "bump";
   spectrum?: boolean;
+  barColors?: { primary: string; secondary: string };
 }) {
   const data = periodData.map((row) => ({
     period: row.period,
@@ -130,14 +126,21 @@ function PairStyle({
     profit: row.net,
   }));
 
+  const revenueInk = barColors?.primary ?? PAIR_COLORS.revenue.dark[0]!;
+  const profitInk = barColors?.secondary ?? PAIR_COLORS.profit.dark[0]!;
+
   const config = {
     revenue: {
       label: "Spending",
-      colors: spectrum ? SPECTRUM_COLORS.revenue : PAIR_COLORS.revenue,
+      colors: spectrum
+        ? SPECTRUM_COLORS.revenue
+        : { light: [revenueInk], dark: [revenueInk] },
     },
     profit: {
       label: "Net",
-      colors: spectrum ? SPECTRUM_COLORS.profit : PAIR_COLORS.profit,
+      colors: spectrum
+        ? SPECTRUM_COLORS.profit
+        : { light: [profitInk], dark: [profitInk] },
     },
   } satisfies ChartConfig;
 
@@ -151,7 +154,7 @@ function PairStyle({
       <EChartsComposedChart.Grid />
       <EChartsComposedChart.XAxis
         dataKey="period"
-        tickFormatter={(value) => shortTick(value)}
+        tickFormatter={shortPeriodTick}
       />
       <EChartsComposedChart.Legend isClickable />
       <EChartsComposedChart.Tooltip />
@@ -167,11 +170,4 @@ function PairStyle({
       />
     </EChartsComposedChart>
   );
-}
-
-function shortTick(period: string): string {
-  const parts = period.split(" ");
-  if (parts.length >= 2) return parts[0]!.slice(0, 3);
-  if (period.length >= 3) return period.slice(0, 3);
-  return period;
 }

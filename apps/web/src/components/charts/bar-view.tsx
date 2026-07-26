@@ -1,19 +1,18 @@
 import { ChartShell } from "@/components/charts/chart-shell";
+import { shortPeriodTick } from "@/components/charts/studio";
 import type { ChartViewProps, CategoryRow, PeriodRow, SingleSeriesRow } from "@/components/charts/types";
 import {
   EChartsBarChart,
   type ChartConfig,
 } from "@/components/evilcharts/charts/echarts-bar-chart";
 import { MONO } from "@/lib/mono";
-import { cn, formatAxisMoney, formatMoney } from "@/lib/utils";
+import { formatAxisMoney, formatMoney } from "@/lib/utils";
 
 type BarStyle = "default" | "peak" | "grid" | "mono";
 
-const PEAK_COLORS = {
-  income: { light: ["#7c3aed"], dark: ["#a78bfa"] },
-  expense: { light: ["#0891b2"], dark: ["#22d3ee"] },
-  value: { light: ["#7c3aed"], dark: ["#a78bfa"] },
-};
+function peakInk(hex: string) {
+  return { light: [hex], dark: [hex] };
+}
 
 export function BarChartView({
   periodData,
@@ -24,6 +23,7 @@ export function BarChartView({
   background = "black",
   currency = "USD",
   barColors,
+  remountKey,
 }: ChartViewProps) {
   const style = (
     ["default", "peak", "grid", "mono"].includes(styleId) ? styleId : "default"
@@ -33,7 +33,7 @@ export function BarChartView({
   const secondary = barColors?.secondary ?? MONO.black;
 
   return (
-    <ChartShell background={background} filenameBase={`funds-bar-${metric}-${style}`}>
+    <ChartShell background={background} filenameBase={`funds-bar-${metric}-${style}`} remountKey={remountKey}>
       {style === "default" ? (
         <DefaultStyle
           metric={metric}
@@ -52,6 +52,8 @@ export function BarChartView({
           singleData={singleData}
           categoryData={categoryData}
           currency={currency}
+          primary={primary}
+          secondary={secondary}
         />
       ) : null}
       {style === "grid" ? (
@@ -177,12 +179,16 @@ function PeakStyle({
   singleData,
   categoryData,
   currency,
+  primary,
+  secondary,
 }: {
   metric: ChartViewProps["metric"];
   periodData: PeriodRow[];
   singleData: SingleSeriesRow[];
   categoryData: CategoryRow[];
   currency: string;
+  primary: string;
+  secondary: string;
 }) {
   if (metric === "both") {
     const peak = periodData.reduce(
@@ -193,14 +199,9 @@ function PeakStyle({
     const peakTotal = peak.income + peak.expense;
 
     const config = {
-      income: { label: "Income", colors: PEAK_COLORS.income },
-      expense: { label: "Spending", colors: PEAK_COLORS.expense },
+      income: { label: "Income", colors: peakInk(secondary) },
+      expense: { label: "Spending", colors: peakInk(primary) },
     } satisfies ChartConfig;
-
-    const legend = [
-      { key: "income", label: "Income", swatch: "bg-[#7c3aed]" },
-      { key: "expense", label: "Spending", swatch: "bg-[#0891b2]" },
-    ];
 
     return (
       <div className="flex w-full flex-col p-1">
@@ -214,7 +215,16 @@ function PeakStyle({
               <span className="text-muted-foreground text-sm">in {peak.period}</span>
             </div>
           </div>
-          <LegendColumn items={legend} />
+          <div className="flex shrink-0 flex-col items-end gap-1.5 pt-1">
+            <span className="text-muted-foreground flex items-center gap-2 text-[11px] sm:text-xs">
+              <span className="size-2.5 shrink-0 rounded-[3px]" style={{ backgroundColor: secondary }} />
+              Income
+            </span>
+            <span className="text-muted-foreground flex items-center gap-2 text-[11px] sm:text-xs">
+              <span className="size-2.5 shrink-0 rounded-[3px]" style={{ backgroundColor: primary }} />
+              Spending
+            </span>
+          </div>
         </div>
 
         <div className="mt-3 h-72 w-full sm:h-80">
@@ -226,7 +236,7 @@ function PeakStyle({
             stackType="stacked"
             enableMaxValueHighlight
           >
-            <EChartsBarChart.XAxis dataKey="period" hideDots />
+            <EChartsBarChart.XAxis dataKey="period" hideDots tickFormatter={shortPeriodTick} />
             <EChartsBarChart.Tooltip />
             <EChartsBarChart.Bar dataKey="expense" radius={6} />
             <EChartsBarChart.Bar dataKey="income" radius={6} />
@@ -245,9 +255,10 @@ function PeakStyle({
     rows[0] ?? { period: "—", value: 0 },
   );
   const label = metric === "income" ? "Income" : "Spending";
+  const ink = metric === "income" ? secondary : primary;
 
   const config = {
-    value: { label, colors: PEAK_COLORS.value },
+    value: { label, colors: peakInk(ink) },
   } satisfies ChartConfig;
 
   return (
@@ -262,9 +273,12 @@ function PeakStyle({
             <span className="text-muted-foreground text-sm">in {peak.period}</span>
           </div>
         </div>
-        <LegendColumn
-          items={[{ key: "value", label, swatch: "bg-[#7c3aed]" }]}
-        />
+        <div className="flex shrink-0 flex-col items-end gap-1.5 pt-1">
+          <span className="text-muted-foreground flex items-center gap-2 text-[11px] sm:text-xs">
+            <span className="size-2.5 shrink-0 rounded-[3px]" style={{ backgroundColor: ink }} />
+            {label}
+          </span>
+        </div>
       </div>
 
       <div className="mt-3 h-72 w-full sm:h-80">
@@ -275,7 +289,7 @@ function PeakStyle({
           className="h-full w-full"
           enableMaxValueHighlight
         >
-          <EChartsBarChart.XAxis dataKey="period" hideDots />
+          <EChartsBarChart.XAxis dataKey="period" hideDots tickFormatter={shortPeriodTick} />
           <EChartsBarChart.Tooltip />
           <EChartsBarChart.Bar dataKey="value" radius={6} />
         </EChartsBarChart>
@@ -398,7 +412,7 @@ function MonoStyle({
         >
           <EChartsBarChart.XAxis
             dataKey="period"
-            tickFormatter={(value) => shortTick(value)}
+            tickFormatter={shortPeriodTick}
             hideDots
           />
           <EChartsBarChart.Bar dataKey={dataKey} variant="expandable" />
@@ -510,31 +524,4 @@ function MonoHeader({
       </div>
     </div>
   );
-}
-
-function LegendColumn({
-  items,
-}: {
-  items: { key: string; label: string; swatch: string }[];
-}) {
-  return (
-    <div className="flex shrink-0 flex-col items-end gap-1.5 pt-1">
-      {items.map(({ key, label, swatch }) => (
-        <span
-          key={key}
-          className="text-muted-foreground flex items-center gap-2 text-[11px] sm:text-xs"
-        >
-          <span className={cn("size-2.5 shrink-0 rounded-[3px]", swatch)} />
-          {label}
-        </span>
-      ))}
-    </div>
-  );
-}
-
-function shortTick(period: string): string {
-  const parts = period.split(" ");
-  if (parts.length >= 2) return parts[0]!.slice(0, 3);
-  if (period.length >= 7) return period.slice(0, 3);
-  return period.slice(0, 3);
 }

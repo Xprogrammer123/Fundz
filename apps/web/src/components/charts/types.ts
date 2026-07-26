@@ -29,6 +29,8 @@ export type ChartViewProps = {
   background?: "black" | "white" | "paper" | "transparent";
   /** ISO currency from the imported statement */
   currency?: string;
-  /** Custom bar/series ink colors (primary = spending, secondary = income) */
+  /** Custom series ink colors (primary = spending, secondary = income) */
   barColors?: { primary: string; secondary: string };
+  /** Remount key for theme/style switches so ECharts re-reads colors */
+  remountKey?: string;
 };

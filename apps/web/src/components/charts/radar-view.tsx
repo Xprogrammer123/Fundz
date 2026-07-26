@@ -1,15 +1,20 @@
 import { ChartShell } from "@/components/charts/chart-shell";
 import type { ChartViewProps } from "@/components/charts/types";
 import { EChartsRadarChart } from "@/components/evilcharts/charts/echarts-radar-chart";
-import { seriesColors } from "@/lib/mono";
 
-/** Radar chart view — paste EvilCharts radar style variants here later. */
+/** Radar chart view — categories or recent periods from the imported CSV. */
 export function RadarChartView({
   categoryData,
   periodData,
   metric,
   background = "black",
+  seriesConfig,
+  barColors,
+  remountKey,
 }: ChartViewProps) {
+  const spendingColor = barColors?.primary ?? "#38bdf8";
+  const incomeColor = barColors?.secondary ?? "#34d399";
+
   if (metric === "category" || categoryData.length > 0) {
     const radarData = categoryData.slice(0, 8).map((c) => ({
       category: c.category,
@@ -18,9 +23,9 @@ export function RadarChartView({
 
     return (
       <ChartShell
-        title="Category radar"
         background={background}
         filenameBase="funds-radar-category"
+        remountKey={remountKey}
       >
         {radarData.length ? (
           <EChartsRadarChart
@@ -28,7 +33,10 @@ export function RadarChartView({
             config={{
               spending: {
                 label: "Spending",
-                colors: seriesColors("expense"),
+                colors: {
+                  light: [spendingColor],
+                  dark: [spendingColor],
+                },
               },
             }}
             className="h-80 w-full"
@@ -47,31 +55,34 @@ export function RadarChartView({
     );
   }
 
-  const radarData = periodData.slice(-6).map((p) => ({
+  const radarData = periodData.slice(-8).map((p) => ({
     period: p.period,
     income: p.income,
     expense: p.expense,
   }));
 
   return (
-    <ChartShell title="Period radar" background={background} filenameBase="funds-radar-period">
+    <ChartShell
+      background={background}
+      filenameBase="funds-radar-period"
+      remountKey={remountKey}
+    >
       <EChartsRadarChart
         data={radarData}
         config={{
-          income: {
+          income: seriesConfig.income ?? {
             label: "Income",
-            colors: seriesColors("income"),
+            colors: { light: [incomeColor], dark: [incomeColor] },
           },
-          expense: {
+          expense: seriesConfig.expense ?? {
             label: "Spending",
-            colors: seriesColors("expense"),
+            colors: { light: [spendingColor], dark: [spendingColor] },
           },
         }}
         className="h-80 w-full"
       >
         <EChartsRadarChart.PolarGrid />
         <EChartsRadarChart.PolarAngleAxis dataKey="period" />
-        <EChartsRadarChart.Legend />
         <EChartsRadarChart.Tooltip />
         <EChartsRadarChart.Radar dataKey="income" />
         <EChartsRadarChart.Radar dataKey="expense" />

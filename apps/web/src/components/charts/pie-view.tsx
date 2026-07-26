@@ -1,10 +1,5 @@
 import { ChartShell } from "@/components/charts/chart-shell";
-import type {
-  CategoryRow,
-  ChartViewProps,
-  PeriodRow,
-  SingleSeriesRow,
-} from "@/components/charts/types";
+import type { ChartViewProps, CategoryRow, PeriodRow, SingleSeriesRow } from "@/components/charts/types";
 import {
   EChartsPieChart,
   type ChartConfig,
@@ -22,42 +17,53 @@ const GRAY_SWATCHES = [
   "bg-[#a0a0a0]",
   "bg-[#868686]",
   "bg-[#6f6f6f]",
-  "bg-[#585858]",
-  "bg-[#404040]",
+  "bg-[#5a5a5a]",
+  "bg-[#454545]",
 ];
 
 const GRAY_COLORS = [
-  "#ffffff",
-  "#dedede",
-  "#bebebe",
-  "#a0a0a0",
-  "#868686",
-  "#6f6f6f",
-  "#585858",
-  "#404040",
+  { light: ["#0a0a0a"], dark: ["#ffffff"] },
+  { light: ["#262626"], dark: ["#dedede"] },
+  { light: ["#3d3d3d"], dark: ["#bebebe"] },
+  { light: ["#545454"], dark: ["#a0a0a0"] },
+  { light: ["#6b6b6b"], dark: ["#868686"] },
+  { light: ["#7d7d7d"], dark: ["#6f6f6f"] },
+  { light: ["#8f8f8f"], dark: ["#5a5a5a"] },
+  { light: ["#a1a1a1"], dark: ["#454545"] },
 ];
 
-const MIX_SWATCHES = [
-  "bg-[#a78bfa]",
-  "bg-[#818cf8]",
-  "bg-[#38bdf8]",
-  "bg-[#34d399]",
-  "bg-[#fbbf24]",
-  "bg-[#fb7185]",
-  "bg-[#f472b6]",
-  "bg-[#22d3ee]",
+const MIX_PALETTE = [
+  {
+    swatch: "bg-[#a78bfa]",
+    colors: { light: ["#7c3aed", "#a855f7"], dark: ["#a78bfa", "#c4b5fd"] },
+  },
+  {
+    swatch: "bg-[#818cf8]",
+    colors: { light: ["#4f46e5", "#6366f1"], dark: ["#818cf8", "#a5b4fc"] },
+  },
+  {
+    swatch: "bg-[#38bdf8]",
+    colors: { light: ["#0284c7", "#0ea5e9"], dark: ["#38bdf8", "#7dd3fc"] },
+  },
+  {
+    swatch: "bg-[#34d399]",
+    colors: { light: ["#059669", "#10b981"], dark: ["#34d399", "#6ee7b7"] },
+  },
+  {
+    swatch: "bg-[#fbbf24]",
+    colors: { light: ["#d97706", "#f59e0b"], dark: ["#fbbf24", "#fcd34d"] },
+  },
+  {
+    swatch: "bg-[#fb7185]",
+    colors: { light: ["#e11d48", "#f43f5e"], dark: ["#fb7185", "#fda4af"] },
+  },
 ];
 
-const MIX_COLORS = [
-  { light: ["#7c3aed", "#a855f7"], dark: ["#a78bfa", "#c4b5fd"] },
-  { light: ["#4f46e5", "#6366f1"], dark: ["#818cf8", "#a5b4fc"] },
-  { light: ["#0284c7", "#0ea5e9"], dark: ["#38bdf8", "#7dd3fc"] },
-  { light: ["#059669", "#10b981"], dark: ["#34d399", "#6ee7b7"] },
-  { light: ["#d97706", "#f59e0b"], dark: ["#fbbf24", "#fcd34d"] },
-  { light: ["#e11d48", "#f43f5e"], dark: ["#fb7185", "#fda4af"] },
-  { light: ["#db2777", "#ec4899"], dark: ["#f472b6", "#f9a8d4"] },
-  { light: ["#0891b2", "#06b6d4"], dark: ["#22d3ee", "#67e8f9"] },
-];
+type Slice = {
+  key: string;
+  label: string;
+  value: number;
+};
 
 export function PieChartView({
   periodData,
@@ -68,6 +74,7 @@ export function PieChartView({
   styleId = "default",
   background = "black",
   currency = "USD",
+  remountKey,
 }: ChartViewProps) {
   const style = (
     ["default", "share", "rings", "mix", "gauge"].includes(styleId)
@@ -81,7 +88,7 @@ export function PieChartView({
   );
 
   return (
-    <ChartShell background={background} filenameBase={`funds-pie-${metric}-${style}`}>
+    <ChartShell background={background} filenameBase={`funds-pie-${metric}-${style}`} remountKey={remountKey}>
       {style === "default" ? (
         <DefaultStyle
           metric={metric}
@@ -95,13 +102,13 @@ export function PieChartView({
         <ShareStyle slices={slices} currency={currency} />
       ) : null}
       {style === "rings" ? (
-        <RingsStyle periodData={periodData} singleData={singleData} metric={metric} />
+        <RingsStyle periodData={periodData} categoryData={categoryData} currency={currency} />
       ) : null}
       {style === "mix" ? (
         <MixStyle slices={slices} currency={currency} />
       ) : null}
       {style === "gauge" ? (
-        <GaugeStyle periodData={periodData} singleData={singleData} metric={metric} />
+        <GaugeStyle periodData={periodData} currency={currency} />
       ) : null}
     </ChartShell>
   );
@@ -171,7 +178,7 @@ function DefaultStyle({
   );
 }
 
-/** Donut with % labels, center total, clickable legend grid. */
+/** Grayscale donut + share labels + clickable legend. */
 function ShareStyle({
   slices,
   currency,
@@ -181,28 +188,32 @@ function ShareStyle({
 }) {
   const [selected, setSelected] = useState<string | null>(null);
   const total = slices.reduce((s, r) => s + r.value, 0);
+  const top = slices.slice(0, 8);
 
-  const chartData = [...slices].reverse().map((s) => ({
+  const chartData = [...top].reverse().map((s) => ({
     product: s.key,
     value: s.value,
     share: total > 0 ? `${Math.round((s.value / total) * 100)}%` : "0%",
   }));
 
-  const config: ChartConfig = {};
-  slices.forEach((s, i) => {
-    const color = GRAY_COLORS[i % GRAY_COLORS.length]!;
-    config[s.key] = {
+  const chartConfig: ChartConfig = {};
+  top.forEach((s, i) => {
+    chartConfig[s.key] = {
       label: s.label,
-      colors: { light: ["#0a0a0a"], dark: [color] },
+      colors: GRAY_COLORS[i % GRAY_COLORS.length],
     };
   });
+
+  if (!top.length) {
+    return <EmptyPie />;
+  }
 
   return (
     <div className="flex w-full flex-col p-1">
       <div className="relative h-72 w-full sm:h-80">
         <EChartsPieChart
           data={chartData}
-          config={config}
+          config={chartConfig}
           dataKey="value"
           nameKey="product"
           className="h-full w-full"
@@ -231,7 +242,7 @@ function ShareStyle({
       </div>
 
       <div className="border-border mt-3 grid grid-flow-col grid-cols-2 grid-rows-3 gap-x-6 gap-y-1.5 border-t pt-3">
-        {slices.slice(0, 6).map((s, i) => {
+        {top.map((s, i) => {
           const pct = total > 0 ? Math.round((s.value / total) * 100) : 0;
           return (
             <button
@@ -263,45 +274,41 @@ function ShareStyle({
   );
 }
 
-/** Dual progress rings from cashflow health. */
+/** Twin progress rings from cashflow ratios. */
 function RingsStyle({
   periodData,
-  singleData,
-  metric,
+  categoryData,
+  currency,
 }: {
   periodData: PeriodRow[];
-  singleData: SingleSeriesRow[];
-  metric: ChartViewProps["metric"];
+  categoryData: CategoryRow[];
+  currency: string;
 }) {
   const income = periodData.reduce((s, r) => s + r.income, 0);
   const expense = periodData.reduce((s, r) => s + r.expense, 0);
-  const flow = income + expense;
-
-  let spendPct = flow > 0 ? Math.round((expense / flow) * 100) : 0;
-  let savePct =
-    income > 0
-      ? Math.round(Math.max(0, Math.min(100, ((income - expense) / income) * 100)))
+  const topCat = categoryData[0];
+  const spendRate =
+    income > 0 ? Math.min(100, Math.round((expense / income) * 100)) : expense > 0 ? 100 : 0;
+  const topShare =
+    expense > 0 && topCat
+      ? Math.min(100, Math.round((topCat.total / expense) * 100))
       : 0;
-
-  if (metric === "expense" || metric === "income") {
-    const vals = singleData.map((r) => r.value);
-    const max = Math.max(...vals, 1);
-    const avg = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
-    const latest = vals[vals.length - 1] ?? 0;
-    spendPct = Math.round((avg / max) * 100);
-    savePct = Math.round((latest / max) * 100);
-  }
 
   const stats = [
     {
       id: "spend",
-      value: spendPct,
-      caption: "Share of cashflow going to spending.",
+      value: spendRate,
+      caption:
+        income > 0
+          ? `${formatMoney(expense, currency)} spent of ${formatMoney(income, currency)} income.`
+          : "Spending as a share of income in range.",
     },
     {
-      id: "save",
-      value: savePct,
-      caption: "Income kept after spending in this range.",
+      id: "topcat",
+      value: topShare,
+      caption: topCat
+        ? `${topCat.category} is the largest spending category.`
+        : "Largest category share of spending.",
     },
   ] as const;
 
@@ -316,9 +323,12 @@ function RingsStyle({
             Where the money goes
           </span>
         </div>
+        <span className="text-muted-foreground shrink-0 text-[10px] sm:text-xs">
+          {periodData.length} periods
+        </span>
       </div>
 
-      <div className="mt-3 grid h-64 grid-cols-2 gap-4 sm:h-72">
+      <div className="mt-3 grid min-h-72 flex-1 grid-cols-2 gap-4">
         {stats.map(({ id, value, caption }) => (
           <ProgressRing key={id} id={id} value={value} caption={caption} />
         ))}
@@ -343,12 +353,12 @@ function ProgressRing({
   const GAP = { light: ["transparent"], dark: ["transparent"] };
   const filled = Math.round((DOT_COUNT * value) / 100);
 
-  const data = Array.from({ length: SECTORS }, (_, i) => ({
+  const chartData = Array.from({ length: SECTORS }, (_, i) => ({
     dot: `${id}-${i}`,
     value: 1,
   }));
 
-  const config: ChartConfig = Object.fromEntries(
+  const chartConfig: ChartConfig = Object.fromEntries(
     Array.from({ length: SECTORS }, (_, i) => {
       const colors = i % 2 ? GAP : i / 2 < filled ? FILLED : TRACK;
       return [`${id}-${i}`, { label: "", colors }];
@@ -358,11 +368,11 @@ function ProgressRing({
   return (
     <div className="relative min-h-0">
       <EChartsPieChart
-        data={data}
-        config={config}
+        data={chartData}
+        config={chartConfig}
         dataKey="value"
         nameKey="dot"
-        className="h-full w-full"
+        className="h-full min-h-56 w-full"
       >
         <EChartsPieChart.Pie
           innerRadius="85%"
@@ -374,8 +384,8 @@ function ProgressRing({
         />
       </EChartsPieChart>
 
-      <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-1 bg-[radial-gradient(circle_closest-side,rgba(255,255,255,0.05)_0_79%,transparent_79%)] px-[25%] text-center">
-        <span className="text-primary text-2xl font-medium tracking-tight sm:text-4xl">
+      <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-1 bg-[radial-gradient(circle_closest-side,rgba(255,255,255,0.05)_0_79%,transparent_79%)] px-[18%] text-center">
+        <span className="text-primary text-2xl leading-none font-medium tracking-tight sm:text-4xl">
           {value}%
         </span>
         <span className="text-muted-foreground text-[10px] leading-snug text-balance sm:text-xs">
@@ -386,7 +396,7 @@ function ProgressRing({
   );
 }
 
-/** Donut + side legend list. */
+/** Side list + colorful donut mix. */
 function MixStyle({
   slices,
   currency,
@@ -394,30 +404,35 @@ function MixStyle({
   slices: Slice[];
   currency: string;
 }) {
-  const top = slices.slice(0, 8);
+  const top = slices.slice(0, 6);
   const total = top.reduce((s, r) => s + r.value, 0);
   const count = top.length;
 
-  const config: ChartConfig = {};
-  top.forEach((s, i) => {
-    config[s.key] = {
-      label: s.label,
-      colors: MIX_COLORS[i % MIX_COLORS.length],
-    };
-  });
-
-  const chartData = top.map((s) => ({
+  const chartData = top.map((s, i) => ({
     channel: s.key,
     label: s.label,
     value: s.value,
+    swatch: MIX_PALETTE[i % MIX_PALETTE.length]!.swatch,
   }));
+
+  const chartConfig: ChartConfig = {};
+  top.forEach((s, i) => {
+    chartConfig[s.key] = {
+      label: s.label,
+      colors: MIX_PALETTE[i % MIX_PALETTE.length]!.colors,
+    };
+  });
+
+  if (!top.length) {
+    return <EmptyPie />;
+  }
 
   return (
     <div className="flex w-full items-center gap-3 p-1 sm:gap-6">
       <div className="relative aspect-square w-[42%] max-w-72 shrink-0">
         <EChartsPieChart
           data={chartData}
-          config={config}
+          config={chartConfig}
           dataKey="value"
           nameKey="channel"
           className="h-full w-full"
@@ -435,7 +450,7 @@ function MixStyle({
 
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <div className="border-border flex aspect-square w-[56%] flex-col items-center justify-center rounded-full border border-dashed">
-            <span className="text-primary text-lg font-semibold tracking-tight sm:text-2xl">
+            <span className="text-primary text-lg leading-none font-semibold tracking-tight sm:text-2xl">
               {count}
             </span>
             <span className="text-muted-foreground mt-1 text-[10px] sm:text-xs">
@@ -446,61 +461,68 @@ function MixStyle({
       </div>
 
       <div className="flex min-h-0 min-w-0 flex-1 flex-col justify-center">
-        {top.map((s, i) => (
-          <div key={s.key} className="flex items-center gap-2 py-1.5 sm:py-2">
-            <span
-              className={cn(
-                "size-2.5 shrink-0 rounded-[3px]",
-                MIX_SWATCHES[i % MIX_SWATCHES.length],
-              )}
-            />
-            <span className="text-muted-foreground truncate text-xs">{s.label}</span>
+        {chartData.map(({ channel, label, value, swatch }) => (
+          <div key={channel} className="flex items-center gap-2 py-1.5 sm:py-2">
+            <span className={cn("size-2.5 shrink-0 rounded-[3px]", swatch)} />
+            <span className="text-muted-foreground truncate text-xs">{label}</span>
             <span className="text-primary ml-auto text-xs font-semibold">
-              {formatMoney(s.value, currency)}
-            </span>
-            <span className="text-muted-foreground/60 w-10 shrink-0 text-right text-[10px]">
-              {total > 0 ? Math.round((s.value / total) * 100) : 0}%
+              {formatMoney(value, currency)}
             </span>
           </div>
         ))}
+        <div className="border-border mt-1 flex items-center justify-between border-t pt-2 text-xs">
+          <span className="text-muted-foreground">Total</span>
+          <span className="text-primary font-semibold">
+            {formatMoney(total, currency)}
+          </span>
+        </div>
       </div>
     </div>
   );
 }
 
-/** Semi-gauge health score from spend vs income. */
+/** Savings-rate gauge (0–1000 scale). */
 function GaugeStyle({
   periodData,
-  singleData,
-  metric,
+  currency,
 }: {
   periodData: PeriodRow[];
-  singleData: SingleSeriesRow[];
-  metric: ChartViewProps["metric"];
+  currency: string;
 }) {
   const income = periodData.reduce((s, r) => s + r.income, 0);
   const expense = periodData.reduce((s, r) => s + r.expense, 0);
-
-  let score: number;
-  if (metric === "both" || metric === "category") {
-    // Higher score = healthier (more income relative to spending)
-    score =
-      income <= 0
-        ? 200
-        : Math.round(Math.max(0, Math.min(1000, (1 - expense / income) * 500 + 500)));
-  } else {
-    const vals = singleData.map((r) => r.value);
-    const avg = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
-    const max = Math.max(...vals, 1);
-    score = Math.round((avg / max) * 1000);
-  }
-
+  const net = income - expense;
+  const savingsPct = income > 0 ? (net / income) * 100 : 0;
+  // Map -20%..40% savings into 0..1000 score for the gauge bands
+  const score = Math.max(
+    0,
+    Math.min(1000, Math.round(((savingsPct + 20) / 60) * 1000)),
+  );
   const MAX = 1000;
   const START_ANGLE = 210;
+
   const chartData = [
-    { band: "atrisk", label: "At risk", from: 0, value: 450, bar: "bg-[#fb7185]" },
-    { band: "fair", label: "Fair", from: 450, value: 200, bar: "bg-[#fbbf24]" },
-    { band: "good", label: "Good", from: 650, value: 170, bar: "bg-[#a3e635]" },
+    {
+      band: "atrisk",
+      label: "At risk",
+      from: 0,
+      value: 450,
+      bar: "bg-[#fb7185]",
+    },
+    {
+      band: "fair",
+      label: "Fair",
+      from: 450,
+      value: 200,
+      bar: "bg-[#fbbf24]",
+    },
+    {
+      band: "good",
+      label: "Good",
+      from: 650,
+      value: 170,
+      bar: "bg-[#a3e635]",
+    },
     {
       band: "excellent",
       label: "Excellent",
@@ -526,10 +548,10 @@ function GaugeStyle({
   return (
     <div className="flex w-full flex-col p-1">
       <span className="text-primary text-base font-medium tracking-tight sm:text-lg">
-        Cashflow health
+        Savings health
       </span>
 
-      <div className="relative mx-auto mt-1 aspect-square w-full max-w-[12.5rem] shrink-0">
+      <div className="relative mx-auto mt-1 aspect-square w-full max-w-50 shrink-0">
         <EChartsPieChart
           data={[...chartData].reverse()}
           config={chartConfig}
@@ -568,28 +590,28 @@ function GaugeStyle({
         </div>
       </div>
 
-      <div className="-mt-4 text-center">
+      <div className="-mt-6 text-center">
         <p className="text-primary text-xs font-medium sm:text-sm">
-          Health is {band.label.toLowerCase()}
+          Savings rate is {band.label.toLowerCase()}
         </p>
         <p className="text-muted-foreground text-[10px] sm:text-xs">
-          Based on income vs spending in this range
+          {savingsPct.toFixed(1)}% of income · net {formatMoney(net, currency)}
         </p>
       </div>
 
-      <div className="mt-4 shrink-0 pt-2">
+      <div className="mt-auto shrink-0 pt-4">
         <div className="text-muted-foreground flex text-[10px]">
-          {chartData.map(({ band: b, from, value }) => (
-            <span key={b} style={{ flexGrow: value, flexBasis: 0 }}>
+          {chartData.map(({ band: id, from, value }) => (
+            <span key={id} style={{ flexGrow: value, flexBasis: 0 }}>
               {from}
             </span>
           ))}
           <span>{MAX}</span>
         </div>
         <div className="mt-1 flex gap-1">
-          {chartData.map(({ band: b, bar, value }) => (
+          {chartData.map(({ band: id, bar, value }) => (
             <span
-              key={b}
+              key={id}
               className={cn("h-1.5 rounded-full", bar)}
               style={{ flexGrow: value, flexBasis: 0 }}
             />
@@ -600,15 +622,33 @@ function GaugeStyle({
   );
 }
 
-type Slice = { key: string; label: string; value: number };
-
 function buildSlices(
   metric: ChartViewProps["metric"],
   periodData: PeriodRow[],
   singleData: SingleSeriesRow[],
   categoryData: CategoryRow[],
 ): Slice[] {
-  if (metric === "category") {
+  if (metric === "category" || (metric === "expense" && categoryData.length > 0)) {
+    // Prefer categories for spending-focused pies when available
+    if (metric === "category" && categoryData.length) {
+      return categoryData.map((c) => ({
+        key: slug(c.category),
+        label: c.category,
+        value: c.total,
+      }));
+    }
+  }
+
+  if (metric === "both") {
+    const income = periodData.reduce((s, r) => s + r.income, 0);
+    const expense = periodData.reduce((s, r) => s + r.expense, 0);
+    return [
+      { key: "income", label: "Income", value: income },
+      { key: "expense", label: "Spending", value: expense },
+    ];
+  }
+
+  if (categoryData.length && metric === "expense") {
     return categoryData.map((c) => ({
       key: slug(c.category),
       label: c.category,
@@ -616,40 +656,25 @@ function buildSlices(
     }));
   }
 
-  if (metric === "both") {
-    return [
-      {
-        key: "income",
-        label: "Income",
-        value: periodData.reduce((s, r) => s + r.income, 0),
-      },
-      {
-        key: "expense",
-        label: "Spending",
-        value: periodData.reduce((s, r) => s + r.expense, 0),
-      },
-    ];
-  }
-
-  // Cap period slices so the pie stays readable
-  const sorted = [...singleData].sort((a, b) => b.value - a.value);
-  const top = sorted.slice(0, 8);
-  const rest = sorted.slice(8).reduce((s, r) => s + r.value, 0);
-  const slices = top.map((r) => ({
+  return singleData.map((r) => ({
     key: slug(r.period),
     label: r.period,
     value: r.value,
   }));
-  if (rest > 0) {
-    slices.push({ key: "other", label: "Other", value: rest });
-  }
-  return slices;
 }
 
-function slug(label: string): string {
-  return label
+function slug(value: string): string {
+  return value
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "")
     .slice(0, 40) || "slice";
+}
+
+function EmptyPie() {
+  return (
+    <p className="py-12 text-center text-sm text-muted-foreground">
+      No slices in this range.
+    </p>
+  );
 }

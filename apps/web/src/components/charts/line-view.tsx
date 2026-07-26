@@ -1,4 +1,5 @@
 import { ChartShell } from "@/components/charts/chart-shell";
+import { shortPeriodTick } from "@/components/charts/studio";
 import type { ChartViewProps, PeriodRow, SingleSeriesRow } from "@/components/charts/types";
 import {
   EChartsLineChart,
@@ -21,6 +22,7 @@ export function LineChartView({
   metric,
   styleId = "default",
   background = "black",
+  remountKey,
 }: ChartViewProps) {
   const style = (
     ["default", "glow", "versus"].includes(styleId) ? styleId : "default"
@@ -28,7 +30,7 @@ export function LineChartView({
 
   if (metric === "category") {
     return (
-      <ChartShell background={background} filenameBase="funds-line-category">
+      <ChartShell background={background} filenameBase="funds-line-category" remountKey={remountKey}>
         <p className="py-12 text-center text-sm text-muted-foreground">
           Switch to spending or income for line charts.
         </p>
@@ -37,7 +39,7 @@ export function LineChartView({
   }
 
   return (
-    <ChartShell background={background} filenameBase={`funds-line-${metric}-${style}`}>
+    <ChartShell background={background} filenameBase={`funds-line-${metric}-${style}`} remountKey={remountKey}>
       {style === "default" ? (
         <DefaultStyle
           metric={metric}
@@ -399,7 +401,7 @@ function VersusFrame({
           <EChartsLineChart.YAxis />
           <EChartsLineChart.XAxis
             dataKey="period"
-            tickFormatter={(value) => shortTick(value)}
+            tickFormatter={shortPeriodTick}
           />
           <EChartsLineChart.Tooltip />
           <EChartsLineChart.Line dataKey="previous" strokeVariant="dashed" strokeWidth={1.5} />
@@ -485,12 +487,4 @@ function maxBy<T>(rows: T[], score: (row: T) => number): T | undefined {
 function minBy<T>(rows: T[], score: (row: T) => number): T | undefined {
   if (!rows.length) return undefined;
   return rows.reduce((best, row) => (score(row) < score(best) ? row : best));
-}
-
-function shortTick(period: string): string {
-  const parts = period.split(" ");
-  if (parts.length >= 2) return parts[0]!.slice(0, 3);
-  if (period.length === 7) return period.slice(5); // YYYY-MM
-  if (period.length >= 10) return period.slice(5, 10); // MM-DD
-  return period.length > 6 ? period.slice(0, 3) : period;
 }

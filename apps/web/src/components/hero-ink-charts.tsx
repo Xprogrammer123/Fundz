@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
 
-/** Hand-ink bar skyline — grows in like a chart reveal */
+/** Solid ink bar skyline — HTML bars so grow animation doesn't collapse. */
 export function InkBars({
   values,
   className,
@@ -10,27 +10,29 @@ export function InkBars({
   className?: string;
 }) {
   const finite = values.map((n) => (Number.isFinite(n) ? Math.abs(n) : 0));
-  const max = Math.max(...finite, 1);
+  // Soften outliers so one huge month doesn't flatten the rest
+  const scaled = finite.map((v) => Math.sqrt(v));
+  const max = Math.max(...scaled, 1);
 
   return (
     <div
       className={cn(
-        "flex h-full min-h-[8rem] w-full items-end justify-center gap-1.5 sm:gap-2",
+        "flex h-full min-h-[8rem] w-full items-end justify-center gap-1 sm:gap-1.5",
         className,
       )}
       aria-hidden
     >
-      {finite.map((v, i) => {
-        const pct = 14 + (v / max) * 86;
+      {scaled.map((v, i) => {
+        const pct = 18 + (v / max) * 82;
         return (
           <motion.div
             key={i}
-            className="w-2 origin-bottom rounded-[2px] bg-ink sm:w-2.5 md:w-3"
+            className="w-2 origin-bottom rounded-[1px] bg-ink sm:w-2.5 md:w-[11px]"
             style={{ height: `${pct}%` }}
             initial={{ scaleY: 0, opacity: 0 }}
-            animate={{ scaleY: 1, opacity: 0.72 + (i % 4) * 0.07 }}
+            animate={{ scaleY: 1, opacity: 0.78 + (i % 4) * 0.05 }}
             transition={{
-              delay: 0.25 + i * 0.045,
+              delay: 0.2 + i * 0.04,
               duration: 0.55,
               ease: [0.22, 1, 0.36, 1],
             }}
@@ -41,7 +43,7 @@ export function InkBars({
   );
 }
 
-/** Scribble sparkline that draws itself */
+/** Small cashflow scribble under the brand mark. */
 export function InkSparkline({
   points,
   className,
@@ -49,17 +51,25 @@ export function InkSparkline({
   points: number[];
   className?: string;
 }) {
-  const w = 320;
-  const h = 72;
+  const w = 280;
+  const h = 56;
   const min = Math.min(...points);
   const max = Math.max(...points);
   const range = max - min || 1;
   const coords = points.map((p, i) => {
     const x = (i / Math.max(points.length - 1, 1)) * w;
-    const y = h - 8 - ((p - min) / range) * (h - 16);
-    return `${x},${y}`;
+    const y = h - 6 - ((p - min) / range) * (h - 14);
+    return [x, y] as const;
   });
-  const d = `M ${coords.join(" L ")}`;
+  // Quadratic smoothing so it feels hand-drawn, not polyline-rigid
+  let d = `M ${coords[0]![0]} ${coords[0]![1]}`;
+  for (let i = 1; i < coords.length; i++) {
+    const [x, y] = coords[i]!;
+    const [px, py] = coords[i - 1]!;
+    const cx = (px + x) / 2;
+    d += ` Q ${px} ${py}, ${cx} ${(py + y) / 2}`;
+    if (i === coords.length - 1) d += ` T ${x} ${y}`;
+  }
 
   return (
     <svg
@@ -71,27 +81,25 @@ export function InkSparkline({
       <motion.path
         d={d}
         stroke="currentColor"
-        strokeWidth="2.6"
+        strokeWidth="2.4"
         strokeLinecap="round"
         strokeLinejoin="round"
         initial={{ pathLength: 0, opacity: 0 }}
         animate={{ pathLength: 1, opacity: 1 }}
-        transition={{ delay: 0.5, duration: 1.2, ease: "easeOut" }}
+        transition={{ delay: 0.45, duration: 1.15, ease: "easeOut" }}
       />
-      {points.map((p, i) => {
-        if (i % 2 !== 0) return null;
-        const x = (i / Math.max(points.length - 1, 1)) * w;
-        const y = h - 8 - ((p - min) / range) * (h - 16);
+      {coords.map(([x, y], i) => {
+        if (i % 3 !== 0) return null;
         return (
           <motion.circle
             key={i}
             cx={x}
             cy={y}
-            r="3.2"
+            r="2.8"
             fill="currentColor"
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.7 + i * 0.05 }}
+            transition={{ delay: 0.65 + i * 0.04 }}
           />
         );
       })}
@@ -99,7 +107,7 @@ export function InkSparkline({
   );
 }
 
-/** Hand-drawn pie — ink wedges, not a polished chart widget */
+/** Hand-drawn pie — ink wedges with a slight tilt in the parent. */
 export function InkPie({ className }: { className?: string }) {
   return (
     <svg
@@ -110,53 +118,56 @@ export function InkPie({ className }: { className?: string }) {
       <motion.circle
         cx="60"
         cy="60"
-        r="46"
+        r="48"
         fill="none"
         stroke="currentColor"
-        strokeWidth="2.2"
+        strokeWidth="2.4"
         initial={{ pathLength: 0 }}
         animate={{ pathLength: 1 }}
-        transition={{ delay: 0.4, duration: 0.8 }}
+        transition={{ delay: 0.35, duration: 0.75 }}
       />
       <motion.path
-        d="M60 60 L60 14 A46 46 0 0 1 102 78 Z"
+        d="M60 60 L60 12 A48 48 0 0 1 104 78 Z"
         fill="currentColor"
-        fillOpacity="0.14"
+        fillOpacity="0.16"
         stroke="currentColor"
-        strokeWidth="1.8"
-        initial={{ opacity: 0, scale: 0.85 }}
+        strokeWidth="2"
+        initial={{ opacity: 0, scale: 0.88 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.65 }}
+        transition={{ delay: 0.55 }}
         style={{ transformOrigin: "60px 60px" }}
       />
       <motion.path
-        d="M60 60 L102 78 A46 46 0 0 1 28 90 Z"
+        d="M60 60 L104 78 A48 48 0 0 1 26 92 Z"
         fill="currentColor"
-        fillOpacity="0.28"
+        fillOpacity="0.34"
         stroke="currentColor"
-        strokeWidth="1.8"
-        initial={{ opacity: 0, scale: 0.85 }}
+        strokeWidth="2"
+        initial={{ opacity: 0, scale: 0.88 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.8 }}
+        transition={{ delay: 0.7 }}
         style={{ transformOrigin: "60px 60px" }}
       />
       <motion.path
-        d="M60 60 L28 90 A46 46 0 0 1 60 14 Z"
+        d="M60 60 L26 92 A48 48 0 0 1 60 12 Z"
         fill="currentColor"
         fillOpacity="0.08"
         stroke="currentColor"
-        strokeWidth="1.8"
-        initial={{ opacity: 0, scale: 0.85 }}
+        strokeWidth="2"
+        initial={{ opacity: 0, scale: 0.88 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.95 }}
+        transition={{ delay: 0.85 }}
         style={{ transformOrigin: "60px 60px" }}
       />
-      <circle cx="60" cy="60" r="4" fill="currentColor" />
+      <circle cx="60" cy="60" r="3.5" fill="currentColor" />
     </svg>
   );
 }
 
-/** Soft area mountain under the brand */
+/**
+ * Bold filled area chart — sits bottom-right like a stamped ink mountain,
+ * not a pale full-bleed wash.
+ */
 export function InkArea({
   points,
   className,
@@ -164,19 +175,26 @@ export function InkArea({
   points: number[];
   className?: string;
 }) {
-  const w = 600;
-  const h = 140;
+  const w = 640;
+  const h = 200;
   const min = Math.min(...points);
   const max = Math.max(...points);
   const range = max - min || 1;
-  const line = points
-    .map((p, i) => {
-      const x = (i / Math.max(points.length - 1, 1)) * w;
-      const y = h - 10 - ((p - min) / range) * (h - 24);
-      return `${x},${y}`;
-    })
-    .join(" ");
-  const area = `M0,${h} L ${line} L${w},${h} Z`;
+  const coords = points.map((p, i) => {
+    const x = (i / Math.max(points.length - 1, 1)) * w;
+    const y = h - 8 - ((p - min) / range) * (h - 28);
+    return [x, y] as const;
+  });
+
+  let line = `M ${coords[0]![0]} ${coords[0]![1]}`;
+  for (let i = 1; i < coords.length; i++) {
+    const [x, y] = coords[i]!;
+    const [px, py] = coords[i - 1]!;
+    const cpx = (px + x) / 2;
+    line += ` Q ${px} ${py + ((i % 2) * 2 - 1)}, ${cpx} ${(py + y) / 2}`;
+    if (i === coords.length - 1) line += ` T ${x} ${y}`;
+  }
+  const area = `${line} L ${w} ${h} L 0 ${h} Z`;
 
   return (
     <svg
@@ -188,21 +206,21 @@ export function InkArea({
       <motion.path
         d={area}
         fill="currentColor"
-        fillOpacity="0.08"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.35, duration: 0.8 }}
+        fillOpacity="0.78"
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3, duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
       />
-      <motion.polyline
-        points={line}
+      <motion.path
+        d={line}
         fill="none"
         stroke="currentColor"
-        strokeWidth="2"
+        strokeWidth="3.2"
         strokeLinecap="round"
         strokeLinejoin="round"
         initial={{ pathLength: 0 }}
         animate={{ pathLength: 1 }}
-        transition={{ delay: 0.45, duration: 1.1 }}
+        transition={{ delay: 0.4, duration: 1.2 }}
       />
     </svg>
   );

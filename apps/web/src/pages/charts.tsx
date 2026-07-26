@@ -15,7 +15,7 @@ import {
 import type { ChartViewProps } from "@/components/charts/types";
 import type { ChartConfig } from "@/components/evilcharts/ui/echarts-chart";
 import { useVault } from "@/db/vault";
-import { CHART_PALETTE, MONO, seriesColors } from "@/lib/mono";
+import { CHART_PALETTE } from "@/lib/mono";
 import { formatMoney } from "@/lib/utils";
 import {
   aggregateByPeriod,
@@ -55,36 +55,42 @@ const VIEW_MAP: Record<ChartType, ComponentType<ChartViewProps>> = {
   sankey: SankeyChartView,
 };
 
+function inkPair(hex: string): { light: string[]; dark: string[] } {
+  // Same ink in both themes so picker always wins regardless of background.
+  return { light: [hex], dark: [hex] };
+}
+
 export function ChartsPage() {
   const { chartSession, account } = useVault();
   const transactions = chartSession?.transactions ?? [];
   const hasUpload = transactions.length > 0;
-  const currency =
-    chartSession?.currency ?? account?.currency ?? "USD";
+  const currency = chartSession?.currency ?? account?.currency ?? "USD";
 
   const years = useMemo(() => listYears(transactions), [transactions]);
-  const [grain, setGrain] = useState<PeriodGrain>("month");
+  const [grain, setGrain] = useState<PeriodGrain>("year");
   const [chartType, setChartType] = useState<ChartType>("area");
   const [styleId, setStyleId] = useState(defaultStyleFor("area"));
   const [background, setBackground] = useState<ChartBackgroundId>("black");
-  const [barColors, setBarColors] = useState<{ primary: string; secondary: string }>({
-    primary: MONO.gray500,
-    secondary: MONO.black,
+  const [inkColors, setInkColors] = useState<{ primary: string; secondary: string }>({
+    primary: "#38bdf8",
+    secondary: "#34d399",
   });
   const [metric, setMetric] = useState<Metric>("expense");
-  const [year, setYear] = useState<string>("");
+  const [year, setYear] = useState<string>("all");
   const [month, setMonth] = useState<string>("all");
   const [yearReady, setYearReady] = useState(false);
 
   useEffect(() => {
-    setYearReady(false);
-    setYear("");
+    // New upload → show the full statement range, not a single demo-like year.
+    setYear("all");
     setMonth("all");
+    setGrain("year");
+    setYearReady(true);
   }, [chartSession?.importId]);
 
   useEffect(() => {
     if (!yearReady && years.length) {
-      setYear(years[years.length - 1]!);
+      setYear("all");
       setYearReady(true);
     } else if (!yearReady && !years.length) {
       setYear("all");
@@ -148,21 +154,39 @@ export function ChartsPage() {
       return {
         income: {
           label: "Income",
-          colors: seriesColors("income"),
+          colors: inkPair(inkColors.secondary),
         },
         expense: {
           label: "Spending",
-          colors: seriesColors("expense"),
+          colors: inkPair(inkColors.primary),
+        },
+        net: {
+          label: "Net",
+          colors: inkPair(inkColors.secondary),
+        },
+        value: {
+          label: "Value",
+          colors: inkPair(inkColors.primary),
         },
       };
     }
     return {
       value: {
         label: metric === "income" ? "Income" : "Spending",
-        colors: seriesColors(metric === "income" ? "income" : "expense"),
+        colors: inkPair(
+          metric === "income" ? inkColors.secondary : inkColors.primary,
+        ),
+      },
+      income: {
+        label: "Income",
+        colors: inkPair(inkColors.secondary),
+      },
+      expense: {
+        label: "Spending",
+        colors: inkPair(inkColors.primary),
       },
     };
-  }, [metric, chartType]);
+  }, [metric, chartType, inkColors]);
 
   const categoryData = useMemo(
     () => categories.map((c) => ({ category: c.category, total: c.total })),
@@ -172,14 +196,33 @@ export function ChartsPage() {
   const categoryConfig = useMemo(() => {
     const config: ChartConfig = {};
     categoryData.forEach((row, i) => {
-      const color = CHART_PALETTE[i % CHART_PALETTE.length]!;
+      // Blend palette with user ink so categories stay distinct but tinted.
+      const base =
+        i === 0
+          ? inkColors.primary
+          : i === 1
+            ? inkColors.secondary
+            : CHART_PALETTE[i % CHART_PALETTE.length]!;
       config[row.category] = {
         label: row.category,
-        colors: { light: [color], dark: [color] },
+        colors: inkPair(base),
       };
     });
     return config;
-  }, [categoryData]);
+  }, [categoryData, inkColors]);
+
+  const remountKey = [
+    chartType,
+    styleId,
+    background,
+    inkColors.primary,
+    inkColors.secondary,
+    grain,
+    year,
+    month,
+    metric,
+    chartSession?.importId ?? "none",
+  ].join("|");
 
   const View = VIEW_MAP[chartType];
   const viewProps: ChartViewProps = {
@@ -192,7 +235,8 @@ export function ChartsPage() {
     styleId,
     background,
     currency,
-    barColors,
+    barColors: inkColors,
+    remountKey,
   };
 
   function handleChartTypeChange(type: ChartType) {
@@ -285,23 +329,28 @@ export function ChartsPage() {
           </section>
 
           <p className="text-sm text-muted-foreground">
+            {totals.count.toLocaleString()} rows ·{" "}
             {formatMoney(totals.expense, currency)} spent ·{" "}
             {formatMoney(totals.income, currency)} in
             <span className="text-ink/45"> · {currency}</span>
+            <span className="text-ink/45">
+              {" "}
+              · {periodData.length} {grain === "day" ? "days" : grain === "month" ? "months" : "years"}
+            </span>
           </p>
 
-          <View {...viewProps} />
+          <View key={remountKey} {...viewProps} />
         </div>
 
         <ChartsInspector
           chartType={chartType}
           styleId={styleId}
           background={background}
-          barColors={barColors}
+          inkColors={inkColors}
           currency={currency}
           onStyleChange={setStyleId}
           onBackgroundChange={setBackground}
-          onBarColorsChange={setBarColors}
+          onInkColorsChange={setInkColors}
         />
       </div>
     </>

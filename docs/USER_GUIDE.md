@@ -28,7 +28,7 @@ Funds is a **local-first** bank statement analyzer. You import CSV/PDF statement
 - **Home** — product positioning and trust summary
 - **Import** — CSV/PDF wizard; auto-navigates to Transactions after success
 - **Transactions** — search, edit categories, Excel export
-- **Charts** — bar/line/area/pie/composed/radar/sankey + period filters + image export
+- **Charts** — bar/line/area/pie/composed/radar/radial/sankey + period filters + image export
 - **Docs** — in-app documentation (`/docs`)
 - **Settings** — passphrase, wipe local data
 

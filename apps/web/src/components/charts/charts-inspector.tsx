@@ -11,11 +11,11 @@ type ChartsInspectorProps = {
   chartType: ChartType;
   styleId: string;
   background: ChartBackgroundId;
-  barColors: BarColorState;
+  inkColors: BarColorState;
   currency: string;
   onStyleChange: (styleId: string) => void;
   onBackgroundChange: (background: ChartBackgroundId) => void;
-  onBarColorsChange: (colors: BarColorState) => void;
+  onInkColorsChange: (colors: BarColorState) => void;
 };
 
 /** Always-visible look controls on the right — not buried in the hover rail. */
@@ -23,14 +23,13 @@ export function ChartsInspector({
   chartType,
   styleId,
   background,
-  barColors,
+  inkColors,
   currency,
   onStyleChange,
   onBackgroundChange,
-  onBarColorsChange,
+  onInkColorsChange,
 }: ChartsInspectorProps) {
   const styles = CHART_STYLES[chartType];
-  const showBarColors = chartType === "bar";
 
   return (
     <aside
@@ -41,7 +40,7 @@ export function ChartsInspector({
         <div className="mb-4">
           <p className="font-display text-lg leading-none text-ink">Look</p>
           <p className="font-hand mt-1.5 text-sm text-ink/55">
-            ink · paper · currency
+            style · paper · ink
           </p>
         </div>
 
@@ -73,7 +72,7 @@ export function ChartsInspector({
           </Block>
         ) : null}
 
-        <Block title="Background" tip="export fill">
+        <Block title="Background" tip="theme + export">
           <div className="grid grid-cols-2 gap-2">
             {CHART_BACKGROUNDS.map((bg) => (
               <button
@@ -102,30 +101,25 @@ export function ChartsInspector({
           </div>
         </Block>
 
-        {showBarColors ? (
-          <Block title="Bar colors" tip="pick ink">
-            <div className="flex flex-col gap-2">
-              <ColorField
-                label="Spending"
-                value={barColors.primary}
-                onChange={(primary) =>
-                  onBarColorsChange({ ...barColors, primary })
-                }
-              />
-              <ColorField
-                label="Income"
-                value={barColors.secondary}
-                onChange={(secondary) =>
-                  onBarColorsChange({ ...barColors, secondary })
-                }
-              />
-            </div>
-          </Block>
-        ) : (
-          <p className="font-hand text-[11px] leading-snug text-ink/40">
-            Switch to Bar to tint the columns ★
+        <Block title="Ink colors" tip="series">
+          <div className="flex flex-col gap-2">
+            <ColorField
+              label="Spending"
+              value={inkColors.primary}
+              onChange={(primary) => onInkColorsChange({ ...inkColors, primary })}
+            />
+            <ColorField
+              label="Income"
+              value={inkColors.secondary}
+              onChange={(secondary) =>
+                onInkColorsChange({ ...inkColors, secondary })
+              }
+            />
+          </div>
+          <p className="font-hand mt-2 text-[11px] leading-snug text-ink/40">
+            Tints spending / income series on this chart.
           </p>
-        )}
+        </Block>
       </div>
     </aside>
   );
@@ -176,7 +170,7 @@ function ColorField({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className="h-8 w-10 cursor-pointer rounded border-0 bg-transparent p-0"
-          aria-label={`${label} bar color`}
+          aria-label={`${label} color`}
         />
       </span>
     </label>
