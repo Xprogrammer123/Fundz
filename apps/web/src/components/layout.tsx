@@ -129,8 +129,8 @@ export function AppLayout() {
 
       <div
         className={cn(
-          "mx-auto flex min-h-dvh w-full flex-col px-4 pt-6 pb-24 sm:px-6 lg:px-8",
-          isChartsStudio ? "max-w-7xl" : "max-w-6xl",
+          "mx-auto flex min-h-dvh w-full max-w-6xl flex-col px-4 pt-6 pb-24 sm:px-6 lg:px-8",
+          isChartsStudio && "max-w-7xl",
           "pl-[6.5rem] sm:pl-28",
         )}
       >
