@@ -1,4 +1,4 @@
-import { HandArrowScribble } from "@/components/hand-arrow";
+import { ChartGlyph } from "@/components/charts/chart-glyphs";
 import {
   CHART_BACKGROUNDS,
   CHART_STYLES,
@@ -6,9 +6,17 @@ import {
   type ChartBackgroundId,
   type ChartType,
 } from "@/components/charts/studio";
+import {
+  SidebarBrand,
+  SidebarFlyout,
+  SidebarRail,
+  flyoutLinkClass,
+  railLinkClass,
+} from "@/components/sidebar-chrome";
 import { cn } from "@/lib/utils";
 import { ArrowLeft01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { motion } from "motion/react";
 import { Link } from "react-router-dom";
 
 type ChartsSidebarProps = {
@@ -35,149 +43,130 @@ export function ChartsSidebar({
       className="group/sidebar fixed top-0 bottom-0 left-0 z-50 flex items-stretch"
       aria-label="Chart studio"
     >
-      <div className="mt-5 mb-5 ml-5 flex w-16 shrink-0 flex-col items-center gap-1 rounded-full border border-ink/20 bg-white/40 px-1.5 py-3 backdrop-blur-xl">
+      <SidebarRail>
         <Link
           to="/import"
           title="Back"
-          className="mb-2 flex size-11 items-center justify-center rounded-full border border-ink/25 text-ink/70 transition-colors hover:bg-ink/10 hover:text-ink"
+          className={cn(
+            railLinkClass(false),
+            "mb-2 border-2 border-ink/25 bg-transparent",
+          )}
         >
-          <HugeiconsIcon icon={ArrowLeft01Icon} size={22} strokeWidth={1.5} />
+          <HugeiconsIcon icon={ArrowLeft01Icon} size={20} strokeWidth={1.6} />
           <span className="sr-only">Back</span>
         </Link>
 
-        <nav className="flex flex-1 flex-col items-center gap-1 overflow-y-auto">
-          {CHART_TYPES.map((type) => (
-            <button
+        <nav className="relative z-10 flex flex-1 flex-col items-center gap-1 overflow-y-auto">
+          {CHART_TYPES.map((type, i) => (
+            <motion.button
               key={type.id}
               type="button"
               title={type.label}
               onClick={() => onChartTypeChange(type.id)}
-              className={cn(
-                "flex size-11 items-center justify-center rounded-full text-[11px] font-semibold tracking-wide transition-colors",
-                chartType === type.id
-                  ? "bg-ink text-paper"
-                  : "text-ink/65 hover:bg-ink/10 hover:text-ink",
-              )}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.04 * i }}
+              whileHover={{ rotate: -6, scale: 1.08 }}
+              whileTap={{ scale: 0.95 }}
+              className={railLinkClass(chartType === type.id)}
             >
-              {type.label.slice(0, 1)}
-            </button>
+              <ChartGlyph type={type.id} className="size-5" />
+            </motion.button>
           ))}
         </nav>
-      </div>
 
-      <div
-        className={cn(
-          "pointer-events-none my-5 ml-3 w-0 overflow-hidden opacity-0",
-          "rounded-3xl border border-ink/20 bg-white/45 backdrop-blur-xl",
-          "transition-[width,opacity] duration-300 ease-out",
-          "group-hover/sidebar:pointer-events-auto group-hover/sidebar:w-56 group-hover/sidebar:opacity-100",
-        )}
-      >
-        <div className="flex h-full w-56 flex-col gap-5 overflow-y-auto py-4">
-          <div className="px-4">
-            <p className="font-display text-lg text-ink">Export</p>
-            <p className="font-hand mt-1 flex items-center gap-1.5 text-sm text-ink-soft">
-              <HandArrowScribble />
-              chart studio
-            </p>
-          </div>
+        <p className="font-hand relative z-10 text-[9px] text-ink/45" aria-hidden>
+          viz
+        </p>
+      </SidebarRail>
 
-          <Section title="Chart">
-            {CHART_TYPES.map((type) => (
-              <SideButton
-                key={type.id}
-                active={chartType === type.id}
-                onClick={() => onChartTypeChange(type.id)}
-              >
+      <SidebarFlyout>
+        <SidebarBrand title="Studio" note="ink your export" />
+
+        <Section title="Chart type" tip="pick a shape">
+          {CHART_TYPES.map((type) => (
+            <button
+              key={type.id}
+              type="button"
+              onClick={() => onChartTypeChange(type.id)}
+              className={flyoutLinkClass(chartType === type.id)}
+            >
+              <span className="flex items-center gap-2.5">
+                <ChartGlyph type={type.id} className="size-4 shrink-0" />
                 {type.label}
-              </SideButton>
-            ))}
-          </Section>
+              </span>
+            </button>
+          ))}
+        </Section>
 
-          <Section title="Style">
-            {styles.map((style) => (
-              <SideButton
-                key={style.id}
-                active={styleId === style.id}
-                onClick={() => onStyleChange(style.id)}
+        <Section title="Style" tip="mood">
+          {styles.map((style) => (
+            <button
+              key={style.id}
+              type="button"
+              onClick={() => onStyleChange(style.id)}
+              className={flyoutLinkClass(styleId === style.id)}
+            >
+              {style.label}
+            </button>
+          ))}
+        </Section>
+
+        <Section title="Background" tip="paper or void">
+          <div className="grid grid-cols-2 gap-2 px-1">
+            {CHART_BACKGROUNDS.map((bg) => (
+              <button
+                key={bg.id}
+                type="button"
+                onClick={() => onBackgroundChange(bg.id)}
+                className={cn(
+                  "font-hand flex flex-col items-center gap-1.5 rounded-2xl border-2 px-2 py-2.5 text-xs transition-all",
+                  background === bg.id
+                    ? "border-ink bg-ink/10 text-ink -rotate-1 shadow-[2px_2px_0_rgba(17,17,17,0.12)]"
+                    : "border-ink/15 text-ink/65 hover:border-ink/40 hover:text-ink",
+                )}
               >
-                {style.label}
-              </SideButton>
+                <span
+                  className="size-8 rounded-full border border-ink/25"
+                  style={{
+                    background:
+                      bg.id === "transparent"
+                        ? "repeating-conic-gradient(#bbb 0% 25%, #eee 0% 50%) 50% / 8px 8px"
+                        : bg.preview,
+                  }}
+                />
+                {bg.label}
+              </button>
             ))}
-          </Section>
+          </div>
+        </Section>
 
-          <Section title="Background">
-            <div className="grid grid-cols-2 gap-2 px-2">
-              {CHART_BACKGROUNDS.map((bg) => (
-                <button
-                  key={bg.id}
-                  type="button"
-                  onClick={() => onBackgroundChange(bg.id)}
-                  className={cn(
-                    "flex flex-col items-center gap-1.5 rounded-2xl border px-2 py-2.5 text-xs transition-colors",
-                    background === bg.id
-                      ? "border-ink bg-ink/10 text-ink"
-                      : "border-ink/15 text-ink/65 hover:border-ink/35 hover:text-ink",
-                  )}
-                >
-                  <span
-                    className="size-8 rounded-full border border-ink/25"
-                    style={{
-                      background:
-                        bg.id === "transparent"
-                          ? "repeating-conic-gradient(#bbb 0% 25%, #eee 0% 50%) 50% / 8px 8px"
-                          : bg.preview,
-                    }}
-                  />
-                  {bg.label}
-                </button>
-              ))}
-            </div>
-          </Section>
-        </div>
-      </div>
+        <p className="font-hand mt-auto px-4 pt-2 text-[11px] leading-snug text-ink/40">
+          hover the rail · export stays local ★
+        </p>
+      </SidebarFlyout>
     </aside>
   );
 }
 
 function Section({
   title,
+  tip,
   children,
 }: {
   title: string;
+  tip: string;
   children: React.ReactNode;
 }) {
   return (
-    <div>
-      <p className="mb-2 px-4 text-[11px] font-medium uppercase tracking-wide text-ink/45">
-        {title}
-      </p>
-      <div className="flex flex-col gap-0.5 px-2">{children}</div>
+    <div className="mb-4">
+      <div className="mb-2 flex items-baseline justify-between gap-2 px-4">
+        <p className="font-display text-[10px] tracking-[0.2em] text-ink/50 uppercase">
+          {title}
+        </p>
+        <p className="font-hand text-[11px] text-ink/35">{tip}</p>
+      </div>
+      <div className="flex flex-col px-2">{children}</div>
     </div>
-  );
-}
-
-function SideButton({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        "rounded-full px-3 py-2.5 text-left text-sm font-medium transition-colors",
-        active
-          ? "bg-ink text-paper"
-          : "text-ink/70 hover:bg-ink/10 hover:text-ink",
-      )}
-    >
-      {children}
-    </button>
   );
 }

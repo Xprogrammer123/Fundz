@@ -1,43 +1,70 @@
 import { HandArrow, HandArrowScribble } from "@/components/hand-arrow";
+import {
+  InkArea,
+  InkBars,
+  InkPie,
+  InkSparkline,
+} from "@/components/hero-ink-charts";
 import { useVault } from "@/db/vault";
 import { cn, formatMoney } from "@/lib/utils";
 import { motion } from "motion/react";
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 
 const LETTERS = ["F", "u", "n", "d", "s"] as const;
+
+const DEMO_BARS = [42, 68, 35, 90, 55, 78, 48, 95, 60, 72, 40, 88];
+const DEMO_LINE = [20, 28, 22, 40, 35, 55, 48, 70, 62, 85, 78, 92];
 
 export function HomePage() {
   const { txCount, cashflow, account, chartSession } = useVault();
   const latest = cashflow[cashflow.length - 1];
   const chartsTo = chartSession?.transactions.length ? "/charts" : "/import";
 
+  const { bars, line } = useMemo(() => {
+    if (cashflow.length >= 3) {
+      const slice = cashflow.slice(-12);
+      return {
+        bars: slice.map((b) => Math.abs(b.expense) || Math.abs(b.income) || 1),
+        line: slice.map((b) => b.net),
+      };
+    }
+    return { bars: DEMO_BARS, line: DEMO_LINE };
+  }, [cashflow]);
+
   return (
     <div className="space-y-20">
       <section className="relative min-h-[calc(100dvh-5rem)] w-full overflow-hidden">
-        {/* Kinetic ink splatches */}
-        <motion.div
-          aria-hidden
-          className="pointer-events-none absolute top-[18%] left-[8%] size-24 rounded-full bg-ink/[0.04] blur-2xl sm:size-40"
-          animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0.85, 0.5] }}
-          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          aria-hidden
-          className="pointer-events-none absolute right-[10%] bottom-[22%] size-32 rounded-full bg-ink/[0.05] blur-3xl sm:size-48"
-          animate={{ scale: [1.1, 0.95, 1.1], opacity: [0.4, 0.7, 0.4] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        />
+        {/* Area wash — cashflow mountain behind everything */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[45%] opacity-90">
+          <InkArea points={line} className="h-full w-full" />
+        </div>
 
-        {/* Diagonal scrap banner */}
+        {/* Left skyline bars */}
+        <div className="pointer-events-none absolute bottom-[18%] left-0 z-[1] flex h-[38%] w-[26%] max-w-[11rem] flex-col sm:w-[20%] sm:max-w-[13rem] md:left-2">
+          <div className="min-h-0 flex-1">
+            <InkBars values={bars} />
+          </div>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1 }}
+            className="font-hand mt-1 shrink-0 text-center text-[11px] text-ink/50 sm:text-xs"
+          >
+            spend ↑
+          </motion.p>
+        </div>
+
+        {/* Right pie */}
         <motion.div
-          initial={{ opacity: 0, x: -40 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.55, duration: 0.6 }}
-          aria-hidden
-          className="pointer-events-none absolute top-[12%] -left-4 z-[5] -rotate-6 sm:top-[14%] sm:left-0"
+          initial={{ opacity: 0, rotate: -20, scale: 0.8 }}
+          animate={{ opacity: 1, rotate: -8, scale: 1 }}
+          transition={{ delay: 0.55, type: "spring", stiffness: 160 }}
+          className="pointer-events-none absolute top-[20%] right-0 z-[1] w-28 sm:top-[18%] sm:w-36 md:right-4 md:w-40"
         >
-          <p className="font-hand border border-ink/30 bg-paper/80 px-3 py-1 text-sm text-ink shadow-[2px_2px_0_rgba(17,17,17,0.12)] backdrop-blur-sm sm:text-base">
-            ★ private by architecture
+          <InkPie className="w-full" />
+          <p className="font-hand absolute -bottom-1 left-1/2 w-max -translate-x-1/2 -rotate-3 text-xs text-ink sm:text-sm">
+            categories
           </p>
         </motion.div>
 
@@ -57,40 +84,54 @@ export function HomePage() {
           transition={{ delay: 0.05 }}
           className="font-display absolute top-0 right-0 z-10 text-right text-[11px] tracking-[0.32em] text-ink uppercase"
         >
-          No cloud
+          Chart studio
           <span className="mt-1 block tracking-[0.2em] text-ink/45">2026</span>
         </motion.p>
 
-        {/* CENTER — readable FUNDS with stagger + print offset */}
-        <div className="absolute top-[40%] left-1/2 z-10 w-[min(100%,58rem)] -translate-x-1/2 -translate-y-1/2 text-center">
-          {/* Ghost misprint layer */}
+        {/* Scrap: CSV → chart story */}
+        <motion.div
+          initial={{ opacity: 0, x: -30, rotate: -8 }}
+          animate={{ opacity: 1, x: 0, rotate: -5 }}
+          transition={{ delay: 0.4 }}
+          className="absolute top-[11%] left-[18%] z-10 hidden sm:block"
+        >
+          <p className="font-hand border border-ink/25 bg-paper/70 px-2.5 py-1 text-sm text-ink backdrop-blur-sm">
+            CSV in
+          </p>
+          <HandArrow
+            direction="up-right"
+            className="ml-8 mt-1 h-10 rotate-[55deg]"
+          />
+          <p className="font-hand ml-10 -mt-1 text-sm text-ink">charts out</p>
+        </motion.div>
+
+        {/* CENTER brand + sparkline through it */}
+        <div className="absolute top-[42%] left-1/2 z-10 w-[min(100%,58rem)] -translate-x-1/2 -translate-y-1/2 text-center">
           <motion.p
             aria-hidden
             initial={{ opacity: 0 }}
-            animate={{ opacity: 0.12 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-            className="font-display pointer-events-none absolute inset-0 translate-x-[0.12em] translate-y-[0.06em] text-[clamp(3.75rem,15vw,9.5rem)] leading-none tracking-[-0.04em] text-ink select-none"
+            animate={{ opacity: 0.1 }}
+            className="font-display pointer-events-none absolute inset-0 translate-x-[0.1em] translate-y-[0.05em] text-[clamp(3.5rem,14vw,9rem)] leading-none tracking-[-0.04em] text-ink select-none"
           >
             Funds
           </motion.p>
 
-          <h1 className="font-display relative text-[clamp(3.75rem,15vw,9.5rem)] leading-none tracking-[-0.04em] text-ink">
+          <h1 className="font-display relative text-[clamp(3.5rem,14vw,9rem)] leading-none tracking-[-0.04em] text-ink">
             <span className="sr-only">Funds</span>
             <span className="inline-flex" aria-hidden>
               {LETTERS.map((letter, i) => (
                 <motion.span
                   key={`${letter}-${i}`}
-                  initial={{ opacity: 0, y: 48, rotate: i % 2 === 0 ? -6 : 6 }}
+                  initial={{ opacity: 0, y: 40, rotate: i % 2 === 0 ? -5 : 5 }}
                   animate={{ opacity: 1, y: 0, rotate: 0 }}
                   transition={{
-                    delay: 0.08 + i * 0.07,
+                    delay: 0.1 + i * 0.07,
                     duration: 0.55,
                     ease: [0.22, 1, 0.36, 1],
                   }}
                   whileHover={{
-                    y: -10,
-                    rotate: i % 2 === 0 ? -4 : 4,
-                    transition: { type: "spring", stiffness: 400, damping: 14 },
+                    y: -12,
+                    transition: { type: "spring", stiffness: 420, damping: 12 },
                   }}
                   className="inline-block cursor-default"
                 >
@@ -100,126 +141,82 @@ export function HomePage() {
             </span>
           </h1>
 
-          {/* Hand scribble underline that draws in */}
-          <motion.svg
-            viewBox="0 0 320 24"
-            className="mx-auto mt-2 h-5 w-[min(90%,28rem)] text-ink sm:h-6"
-            fill="none"
-            aria-hidden
-          >
-            <motion.path
-              d="M8 14 C 60 4, 120 22, 160 10 C 200 -2, 250 18, 312 8"
-              stroke="currentColor"
-              strokeWidth="2.4"
-              strokeLinecap="round"
-              initial={{ pathLength: 0, opacity: 0 }}
-              animate={{ pathLength: 1, opacity: 1 }}
-              transition={{ delay: 0.55, duration: 0.9, ease: "easeOut" }}
-            />
-          </motion.svg>
+          {/* Sparkline as the underline — the chart IS the underline */}
+          <div className="relative mx-auto mt-1 w-[min(95%,30rem)]">
+            <InkSparkline points={line} className="h-14 w-full sm:h-16" />
+            <p className="font-hand absolute -right-2 -bottom-1 hidden text-xs text-ink/55 sm:block">
+              cashflow →
+            </p>
+          </div>
 
           <motion.p
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.65 }}
-            className="font-hand mt-4 text-xl text-ink sm:text-2xl"
+            transition={{ delay: 0.7 }}
+            className="font-hand mt-3 text-xl text-ink sm:text-2xl"
           >
-            your statements. your machine.
+            statements become charts — on this machine only
           </motion.p>
         </div>
 
-        {/* MID-LEFT note */}
+        {/* MID notes */}
         <motion.div
-          initial={{ opacity: 0, x: -16, rotate: -4 }}
-          animate={{ opacity: 1, x: 0, rotate: -2 }}
-          transition={{ delay: 0.45, duration: 0.55 }}
-          className="font-hand absolute top-[24%] left-0 z-10 max-w-[12rem] text-base leading-snug text-ink sm:top-[26%] sm:max-w-[14rem] sm:text-lg"
+          initial={{ opacity: 0, x: -12 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.5 }}
+          className="font-hand absolute top-[30%] left-0 z-10 max-w-[10rem] text-base leading-snug text-ink sm:max-w-[12rem] sm:text-lg"
         >
-          <motion.span
-            animate={{ y: [0, -3, 0] }}
-            transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
-            className="inline-block"
-          >
-            <HandArrow direction="up-right" className="mb-1 h-12 rotate-12" />
-          </motion.span>
-          your vault never leaves this tab
+          <HandArrowScribble className="mb-1" />
+          bars from your real vault
+          {txCount ? (
+            <span className="mt-1 block text-ink/55">{txCount} rows</span>
+          ) : null}
         </motion.div>
 
-        {/* MID-RIGHT note */}
         <motion.div
-          initial={{ opacity: 0, x: 16, rotate: 4 }}
-          animate={{ opacity: 1, x: 0, rotate: 2 }}
-          transition={{ delay: 0.52, duration: 0.55 }}
-          className="font-hand absolute top-[26%] right-0 z-10 max-w-[11rem] text-right text-base leading-snug text-ink sm:max-w-[13rem] sm:text-lg"
+          initial={{ opacity: 0, x: 12 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.55 }}
+          className="font-hand absolute right-0 bottom-[38%] z-10 max-w-[10rem] text-right text-base leading-snug text-ink sm:max-w-[12rem] sm:text-lg md:bottom-[42%]"
         >
           <span className="inline-flex flex-col items-end">
-            <motion.span
-              animate={{ x: [0, 3, 0] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-            >
-              <HandArrowScribble className="mb-1 scale-x-[-1]" />
-            </motion.span>
-            parse · chart · export
+            <HandArrow direction="up" className="mb-1 h-10 rotate-[30deg]" />
+            pie · area · bar · line
           </span>
-        </motion.div>
-
-        {/* Spinning ink stamp */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.6, rotate: -24 }}
-          animate={{ opacity: 1, scale: 1, rotate: -12 }}
-          transition={{ delay: 0.7, type: "spring", stiffness: 180, damping: 14 }}
-          className="pointer-events-none absolute top-[58%] right-[4%] z-[5] hidden select-none sm:block md:right-[8%]"
-          aria-hidden
-        >
-          <motion.div
-            animate={{ rotate: [-12, -8, -12] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            className="flex size-28 items-center justify-center rounded-full border-[3px] border-dashed border-ink/50 md:size-32"
-          >
-            <div className="flex size-[5.25rem] items-center justify-center rounded-full border-2 border-ink/35 md:size-[6.5rem]">
-              <p className="font-hand text-center text-xs leading-tight text-ink md:text-sm">
-                DEVICE
-                <br />
-                ONLY
-                <br />
-                ★
-              </p>
-            </div>
-          </motion.div>
         </motion.div>
 
         {/* BOTTOM LEFT */}
         <motion.p
-          initial={{ opacity: 0, y: 14 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.55 }}
-          className="font-hand absolute bottom-16 left-0 z-10 max-w-[17rem] text-lg leading-snug text-ink sm:bottom-20 sm:max-w-sm sm:text-xl md:bottom-24"
+          transition={{ delay: 0.6 }}
+          className="font-hand absolute bottom-14 left-0 z-10 max-w-[15rem] text-lg leading-snug text-ink sm:bottom-16 sm:max-w-xs sm:text-xl md:bottom-20"
         >
-          Drop a statement. Chart it. Export Excel.
-          <span className="mt-1 block text-ink/60">Nothing is uploaded. Ever.</span>
+          Import a CSV. Watch it become ink charts.
+          <span className="mt-1 block text-ink/55">Nothing is uploaded.</span>
         </motion.p>
 
         {/* BOTTOM RIGHT CTAs */}
         <motion.div
-          initial={{ opacity: 0, y: 14 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.62 }}
-          className="absolute right-0 bottom-16 z-10 flex flex-col items-end gap-3 text-right sm:bottom-20 md:bottom-24"
+          transition={{ delay: 0.68 }}
+          className="absolute right-0 bottom-14 z-10 flex flex-col items-end gap-3 text-right sm:bottom-16 md:bottom-20"
         >
           <Link
             to="/import"
             className={cn(
               "font-display group relative inline-block text-xl text-ink sm:text-2xl md:text-3xl",
               "after:absolute after:inset-x-0 after:bottom-0 after:h-[3px] after:origin-left after:bg-ink",
-              "after:transition-transform after:duration-300 hover:after:scale-x-110",
+              "after:transition-transform hover:after:scale-x-110",
             )}
           >
             Import statement
             <span
-              className="font-hand absolute -top-6 -left-2 -rotate-8 text-sm text-ink/70 opacity-0 transition-opacity group-hover:opacity-100"
+              className="font-hand absolute -top-6 -left-1 -rotate-8 text-sm text-ink/70 opacity-0 transition-opacity group-hover:opacity-100"
               aria-hidden
             >
-              go!
+              then chart it
             </span>
           </Link>
           <Link
@@ -227,7 +224,7 @@ export function HomePage() {
             className="font-hand text-base text-ink/55 transition-colors hover:text-ink sm:text-lg"
           >
             {chartSession?.transactions.length
-              ? "open charts →"
+              ? "open chart studio →"
               : "import to chart →"}
           </Link>
         </motion.div>
