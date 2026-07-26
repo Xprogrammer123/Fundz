@@ -3,44 +3,50 @@ import {
   exportChartImage,
   type ImageFormat,
 } from "@/components/charts/export-chart-image";
+import { backgroundClass, type ChartBackgroundId } from "@/components/charts/studio";
+import { cn } from "@/lib/utils";
 import { useRef, useState, type ReactNode } from "react";
 
 type ChartShellProps = {
-  title: string;
-  subtitle?: string;
+  title?: string;
   children: ReactNode;
   filenameBase?: string;
+  background?: ChartBackgroundId;
 };
 
 export function ChartShell({
   title,
-  subtitle,
   children,
   filenameBase = "funds-chart",
+  background = "black",
 }: ChartShellProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [message, setMessage] = useState<string | null>(null);
 
   function onExport(format: ImageFormat) {
     const stamp = new Date().toISOString().slice(0, 10);
+    const fill =
+      background === "transparent"
+        ? null
+        : background === "white"
+          ? "#ffffff"
+          : background === "paper"
+            ? "#f0ebe3"
+            : "#000000";
     const ok = exportChartImage(
       ref.current,
       `${filenameBase}-${stamp}.${format === "jpeg" ? "jpg" : format}`,
       format,
+      fill,
     );
-    setMessage(ok ? `Saved ${format.toUpperCase()} locally.` : "Could not export chart.");
+    setMessage(ok ? `Saved ${format.toUpperCase()}.` : "Could not export.");
     window.setTimeout(() => setMessage(null), 2500);
   }
 
   return (
-    <section className="panel p-4 sm:p-6">
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h2 className="font-display text-xl">{title}</h2>
-          {subtitle ? (
-            <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
-          ) : null}
-        </div>
+    <section className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        {title ? <h2 className="font-display text-xl">{title}</h2> : <span />}
         <div className="flex flex-wrap gap-2">
           <Button type="button" variant="outline" size="sm" onClick={() => onExport("png")}>
             Export PNG
@@ -50,11 +56,17 @@ export function ChartShell({
           </Button>
         </div>
       </div>
-      <div ref={ref} className="chart-export-root min-h-72 w-full">
+      <div
+        ref={ref}
+        className={cn(
+          "chart-export-root min-h-72 w-full overflow-hidden rounded-2xl border border-white/15 p-4 sm:p-6",
+          backgroundClass(background),
+        )}
+      >
         {children}
       </div>
       {message ? (
-        <p className="font-hand mt-3 text-sm text-ink-soft" role="status">
+        <p className="font-hand text-sm text-ink-soft" role="status">
           {message}
         </p>
       ) : null}

@@ -18,6 +18,12 @@ import {
   type ReactNode,
 } from "react";
 
+export type ChartSession = {
+  importId: string;
+  filename: string | null;
+  transactions: Transaction[];
+};
+
 type VaultState = {
   ready: boolean;
   locked: boolean;
@@ -29,6 +35,8 @@ type VaultState = {
   cashflow: MonthlyCashflow[];
   categories: CategorySpend[];
   balances: BalancePoint[];
+  /** Only the latest upload in this browser session — never hydrated from vault history. */
+  chartSession: ChartSession | null;
   unlock: (passphrase: string | null) => Promise<void>;
   createVault: (passphrase: string | null) => Promise<void>;
   importRows: (
@@ -38,6 +46,7 @@ type VaultState = {
   ) => Promise<number>;
   refresh: () => Promise<void>;
   updateCategory: (id: string, category: string | null) => Promise<void>;
+  clearChartSession: () => void;
   wipe: () => Promise<void>;
   setPassphraseAndSave: (passphrase: string | null) => Promise<void>;
 };
@@ -64,6 +73,7 @@ export function VaultProvider({ children }: { children: ReactNode }) {
   const [cashflow, setCashflow] = useState<MonthlyCashflow[]>([]);
   const [categories, setCategories] = useState<CategorySpend[]>([]);
   const [balances, setBalances] = useState<BalancePoint[]>([]);
+  const [chartSession, setChartSession] = useState<ChartSession | null>(null);
 
   const hydrate = useCallback(async (instance: FundsDb) => {
     const acct = instance.ensureDefaultAccount("Primary");
@@ -91,6 +101,7 @@ export function VaultProvider({ children }: { children: ReactNode }) {
           }
           setDb(instance);
           await hydrate(instance);
+          // Do not restore chartSession from past vault data.
         } catch {
           // Needs passphrase — leave locked.
         }
@@ -110,6 +121,7 @@ export function VaultProvider({ children }: { children: ReactNode }) {
         setDb(instance);
         await hydrate(instance);
         setHasVault(true);
+        setChartSession(null);
       } catch (e) {
         setError(e instanceof Error ? e.message : "Could not unlock vault");
         throw e;
@@ -127,6 +139,7 @@ export function VaultProvider({ children }: { children: ReactNode }) {
       setDb(instance);
       await hydrate(instance);
       setHasVault(true);
+      setChartSession(null);
       setError(null);
     },
     [hydrate],
@@ -147,6 +160,11 @@ export function VaultProvider({ children }: { children: ReactNode }) {
       const record = db.importRows(account.id, filename, rows, format);
       await db.persist();
       await hydrate(db);
+      setChartSession({
+        importId: record.id,
+        filename,
+        transactions: db.listTransactionsByImport(record.id),
+      });
       return record.rowCount;
     },
     [account, db, hydrate],
@@ -158,9 +176,20 @@ export function VaultProvider({ children }: { children: ReactNode }) {
       db.updateTransactionCategory(id, category);
       await db.persist();
       await hydrate(db);
+      setChartSession((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          transactions: db.listTransactionsByImport(prev.importId),
+        };
+      });
     },
     [db, hydrate],
   );
+
+  const clearChartSession = useCallback(() => {
+    setChartSession(null);
+  }, []);
 
   const wipe = useCallback(async () => {
     db?.close();
@@ -172,6 +201,7 @@ export function VaultProvider({ children }: { children: ReactNode }) {
     setCashflow([]);
     setCategories([]);
     setBalances([]);
+    setChartSession(null);
     setHasVault(false);
   }, [db]);
 
@@ -196,11 +226,13 @@ export function VaultProvider({ children }: { children: ReactNode }) {
       cashflow,
       categories,
       balances,
+      chartSession,
       unlock,
       createVault,
       importRows,
       refresh,
       updateCategory,
+      clearChartSession,
       wipe,
       setPassphraseAndSave,
     }),
@@ -215,11 +247,13 @@ export function VaultProvider({ children }: { children: ReactNode }) {
       cashflow,
       categories,
       balances,
+      chartSession,
       unlock,
       createVault,
       importRows,
       refresh,
       updateCategory,
+      clearChartSession,
       wipe,
       setPassphraseAndSave,
     ],

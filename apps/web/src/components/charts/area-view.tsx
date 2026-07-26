@@ -9,13 +9,6 @@ import { useState } from "react";
 
 type AreaStyle = "layers" | "compare" | "benchmark" | "spotlight";
 
-const AREA_STYLES: { id: AreaStyle; label: string; hint: string }[] = [
-  { id: "layers", label: "Layers", hint: "Stacked percentiles look — clickable series" },
-  { id: "compare", label: "Compare", hint: "Step + dotted fill with hover reveal" },
-  { id: "benchmark", label: "Benchmark", hint: "Actual vs target / dashed guide" },
-  { id: "spotlight", label: "Spotlight", hint: "Single series with big total" },
-];
-
 const LAYER_COLORS = {
   income: "#62C9D4",
   expense: "#F37A00",
@@ -33,32 +26,27 @@ export function AreaChartView({
   singleData,
   seriesConfig,
   metric,
-  subtitle,
+  styleId = "layers",
+  background = "black",
 }: ChartViewProps) {
-  const [style, setStyle] = useState<AreaStyle>("layers");
+  const style = (
+    ["layers", "compare", "benchmark", "spotlight"].includes(styleId)
+      ? styleId
+      : "layers"
+  ) as AreaStyle;
 
   if (metric === "category") {
     return (
-      <ChartShell title="Category area" subtitle={subtitle} filenameBase="funds-area-category">
-        <StylePicker style={style} onChange={setStyle} />
+      <ChartShell background={background} filenameBase="funds-area-category">
         <p className="py-12 text-center text-sm text-muted-foreground">
-          Area charts are for trends over time. Pick spending/income, or use pie/radial for
-          categories.
+          Switch to spending or income for area charts.
         </p>
       </ChartShell>
     );
   }
 
-  const title =
-    metric === "both"
-      ? "Income vs spending"
-      : metric === "income"
-        ? "Income over time"
-        : "Spending over time";
-
   return (
-    <ChartShell title={title} subtitle={subtitle} filenameBase={`funds-area-${metric}-${style}`}>
-      <StylePicker style={style} onChange={setStyle} />
+    <ChartShell background={background} filenameBase={`funds-area-${metric}-${style}`}>
       {style === "layers" ? (
         <LayersStyle
           metric={metric}
@@ -77,40 +65,6 @@ export function AreaChartView({
         <SpotlightStyle metric={metric} singleData={singleData} periodData={periodData} />
       ) : null}
     </ChartShell>
-  );
-}
-
-function StylePicker({
-  style,
-  onChange,
-}: {
-  style: AreaStyle;
-  onChange: (s: AreaStyle) => void;
-}) {
-  return (
-    <div className="mb-4">
-      <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-        Area style
-      </p>
-      <div className="flex flex-wrap gap-2">
-        {AREA_STYLES.map((s) => (
-          <button
-            key={s.id}
-            type="button"
-            title={s.hint}
-            onClick={() => onChange(s.id)}
-            className={cn(
-              "rounded-xl px-3 py-1.5 text-sm font-medium transition-colors",
-              style === s.id
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted text-muted-foreground hover:bg-sand",
-            )}
-          >
-            {s.label}
-          </button>
-        ))}
-      </div>
-    </div>
   );
 }
 

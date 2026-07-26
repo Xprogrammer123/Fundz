@@ -8,7 +8,7 @@ export function RadarChartView({
   categoryData,
   periodData,
   metric,
-  subtitle,
+  background = "black",
 }: ChartViewProps) {
   if (metric === "category" || categoryData.length > 0) {
     const radarData = categoryData.slice(0, 8).map((c) => ({
@@ -19,7 +19,7 @@ export function RadarChartView({
     return (
       <ChartShell
         title="Category radar"
-        subtitle={subtitle}
+        background={background}
         filenameBase="funds-radar-category"
       >
         {radarData.length ? (
@@ -54,7 +54,7 @@ export function RadarChartView({
   }));
 
   return (
-    <ChartShell title="Period radar" subtitle={subtitle} filenameBase="funds-radar-period">
+    <ChartShell title="Period radar" background={background} filenameBase="funds-radar-period">
       <EChartsRadarChart
         data={radarData}
         config={{

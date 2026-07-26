@@ -1,3 +1,4 @@
+import { HandArrowScribble } from "@/components/hand-arrow";
 import { Button } from "@/components/ui/button";
 import { useVault } from "@/db/vault";
 import { useState, type FormEvent } from "react";
@@ -35,9 +36,12 @@ export function UnlockGate({ children }: { children: React.ReactNode }) {
         <h1 className="font-display text-6xl leading-none text-ink sm:text-7xl">
           Funds
         </h1>
-        <p className="font-hand mt-3 text-xl text-ink-soft">
-          A local-first statement analyzer. Your SQLite vault stays in this
-          browser — nothing is uploaded.
+        <p className="font-hand mt-3 flex items-start gap-2 text-xl text-ink-soft">
+          <HandArrowScribble className="mt-1" />
+          <span>
+            A local-first statement analyzer. Your SQLite vault stays in this
+            browser — nothing is uploaded.
+          </span>
         </p>
         <form onSubmit={onCreate} className="mt-8 space-y-4">
           <label className="block space-y-2 text-sm">
@@ -77,8 +81,9 @@ export function UnlockGate({ children }: { children: React.ReactNode }) {
       <h1 className="font-display text-6xl leading-none text-ink sm:text-7xl">
         Unlock
       </h1>
-      <p className="font-hand mt-3 text-xl text-ink-soft">
-        Enter the passphrase for the vault stored on this device.
+      <p className="font-hand mt-3 flex items-start gap-2 text-xl text-ink-soft">
+        <HandArrowScribble className="mt-1" />
+        <span>Enter the passphrase for the vault stored on this device.</span>
       </p>
       <form onSubmit={onUnlock} className="mt-8 space-y-4">
         <label className="block space-y-2 text-sm">

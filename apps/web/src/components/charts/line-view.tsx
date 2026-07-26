@@ -8,11 +8,11 @@ export function LineChartView({
   singleData,
   seriesConfig,
   metric,
-  subtitle,
+  background = "black",
 }: ChartViewProps) {
   if (metric === "category") {
     return (
-      <ChartShell title="Category trend (line)" subtitle={subtitle} filenameBase="funds-line-category">
+      <ChartShell title="Category trend (line)" background={background} filenameBase="funds-line-category">
         <p className="py-12 text-center text-sm text-muted-foreground">
           Line charts work best for time series. Switch metric to spending/income, or use pie/bar for categories.
         </p>
@@ -22,7 +22,7 @@ export function LineChartView({
 
   if (metric === "both") {
     return (
-      <ChartShell title="Income vs spending" subtitle={subtitle} filenameBase="funds-line-cashflow">
+      <ChartShell title="Income vs spending" background={background} filenameBase="funds-line-cashflow">
         <EChartsLineChart
           data={periodData}
           config={seriesConfig}
@@ -44,7 +44,7 @@ export function LineChartView({
   return (
     <ChartShell
       title={metric === "income" ? "Income over time" : "Spending over time"}
-      subtitle={subtitle}
+      background={background}
       filenameBase={`funds-line-${metric}`}
     >
       <EChartsLineChart

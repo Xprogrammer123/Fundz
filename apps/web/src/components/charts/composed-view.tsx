@@ -8,11 +8,11 @@ export function ComposedChartView({
   periodData,
   seriesConfig,
   metric,
-  subtitle,
+  background = "black",
 }: ChartViewProps) {
   if (metric === "category") {
     return (
-      <ChartShell title="Composed chart" subtitle={subtitle} filenameBase="funds-composed">
+      <ChartShell title="Composed chart" background={background} filenameBase="funds-composed">
         <p className="py-12 text-center text-sm text-muted-foreground">
           Composed charts combine bars and lines over time. Switch to income vs spending.
         </p>
@@ -31,7 +31,7 @@ export function ComposedChartView({
   return (
     <ChartShell
       title="Cash flow composed"
-      subtitle={subtitle}
+      background={background}
       filenameBase="funds-composed-cashflow"
     >
       <EChartsComposedChart

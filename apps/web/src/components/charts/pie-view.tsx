@@ -10,11 +10,11 @@ export function PieChartView({
   categoryData,
   categoryConfig,
   metric,
-  subtitle,
+  background = "black",
 }: ChartViewProps) {
   if (metric === "category") {
     return (
-      <ChartShell title="Spending by category" subtitle={subtitle} filenameBase="funds-pie-category">
+      <ChartShell title="Spending by category" background={background} filenameBase="funds-pie-category">
         <EChartsPieChart
           data={categoryData}
           config={categoryConfig}
@@ -54,7 +54,7 @@ export function PieChartView({
   return (
     <ChartShell
       title={metric === "both" ? "Income vs spending share" : "Share by period"}
-      subtitle={subtitle}
+      background={background}
       filenameBase={`funds-pie-${metric}`}
     >
       <EChartsPieChart

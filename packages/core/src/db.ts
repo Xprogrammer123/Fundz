@@ -26,6 +26,20 @@ async function loadInitSqlJs(): Promise<InitSqlJs> {
   return candidate as InitSqlJs;
 }
 
+function mapTransactionRow(r: Record<string, unknown>): Transaction {
+  return {
+    id: String(r.id),
+    accountId: String(r.account_id),
+    importId: String(r.import_id),
+    date: String(r.date),
+    description: String(r.description),
+    amount: Number(r.amount),
+    balance: r.balance == null ? null : Number(r.balance),
+    category: r.category == null ? null : String(r.category),
+    rawJson: r.raw_json == null ? null : String(r.raw_json),
+  };
+}
+
 const SCHEMA = `
 CREATE TABLE IF NOT EXISTS meta (
   key TEXT PRIMARY KEY,
@@ -246,18 +260,24 @@ export class FundsDb {
     stmt.bind([limit, offset]);
     const rows: Transaction[] = [];
     while (stmt.step()) {
-      const r = stmt.getAsObject() as Record<string, unknown>;
-      rows.push({
-        id: String(r.id),
-        accountId: String(r.account_id),
-        importId: String(r.import_id),
-        date: String(r.date),
-        description: String(r.description),
-        amount: Number(r.amount),
-        balance: r.balance == null ? null : Number(r.balance),
-        category: r.category == null ? null : String(r.category),
-        rawJson: r.raw_json == null ? null : String(r.raw_json),
-      });
+      rows.push(mapTransactionRow(stmt.getAsObject() as Record<string, unknown>));
+    }
+    stmt.free();
+    return rows;
+  }
+
+  /** Transactions from a single import batch (for session charts). */
+  listTransactionsByImport(importId: string): Transaction[] {
+    const stmt = this.db.prepare(
+      `SELECT id, account_id, import_id, date, description, amount, balance, category, raw_json
+       FROM transactions
+       WHERE import_id = ?
+       ORDER BY date ASC, rowid ASC`,
+    );
+    stmt.bind([importId]);
+    const rows: Transaction[] = [];
+    while (stmt.step()) {
+      rows.push(mapTransactionRow(stmt.getAsObject() as Record<string, unknown>));
     }
     stmt.free();
     return rows;

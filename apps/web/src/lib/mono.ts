@@ -1,39 +1,39 @@
-/** Chart palette — white / soft white only (no teal, no solid gray fills). */
+/** Black & white chart palette for dirty-paper theme. */
 export const MONO = {
-  black: "#0a0a0a",
-  white: "#ffffff",
-  gray100: "#f5f5f5",
-  gray200: "#e8e8e8",
-  gray300: "#d4d4d4",
-  gray400: "#bdbdbd",
-  gray500: "#a3a3a3",
-  gray600: "#8a8a8a",
-  gray700: "#737373",
-  gray800: "#0a0a0a",
-  gray900: "#0a0a0a",
+  black: "#111111",
+  white: "#e8e4db",
+  gray100: "#f5f2ea",
+  gray200: "#ddd7cb",
+  gray300: "#b8b2a6",
+  gray400: "#8a8478",
+  gray500: "#5c5c5c",
+  gray600: "#3a3a3a",
+  gray700: "#222222",
+  gray800: "#111111",
+  gray900: "#111111",
 } as const;
 
-/** Distinct grays for multi-series charts */
+/** Distinct tones for multi-series charts */
 export const CHART_PALETTE = [
-  MONO.white,
-  MONO.gray300,
-  MONO.gray400,
+  MONO.black,
   MONO.gray500,
+  MONO.gray400,
   MONO.gray600,
-  MONO.gray200,
+  MONO.gray300,
   MONO.gray700,
-  MONO.gray100,
+  MONO.gray200,
+  MONO.gray800,
 ] as const;
 
 export function seriesColors(kind: "income" | "expense" | "net" | "value") {
   switch (kind) {
     case "income":
-      return { light: [MONO.white], dark: [MONO.white] };
+      return { light: [MONO.black], dark: [MONO.black] };
     case "expense":
-      return { light: [MONO.gray400], dark: [MONO.gray400] };
+      return { light: [MONO.gray500], dark: [MONO.gray500] };
     case "net":
-      return { light: [MONO.gray200], dark: [MONO.gray200] };
+      return { light: [MONO.gray700], dark: [MONO.gray700] };
     default:
-      return { light: [MONO.white], dark: [MONO.white] };
+      return { light: [MONO.black], dark: [MONO.black] };
   }
 }

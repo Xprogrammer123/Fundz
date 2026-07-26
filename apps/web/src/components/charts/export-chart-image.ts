@@ -15,7 +15,7 @@ export function exportChartImage(
   container: HTMLElement | null,
   filename: string,
   format: ImageFormat = "png",
-  pixelRatio = 2,
+  background: string | null = "#000000",
 ): boolean {
   if (!container) return false;
   const canvas = container.querySelector("canvas");
@@ -28,24 +28,27 @@ export function exportChartImage(
         ? "image/webp"
         : "image/png";
 
+  // JPEG cannot be transparent — fall back to black
+  const fill =
+    format === "jpeg" && (background === null || background === "transparent")
+      ? "#000000"
+      : background;
+
   try {
-    // Upscale via offscreen canvas for sharper exports
     const out = document.createElement("canvas");
-    out.width = canvas.width * (pixelRatio > 1 ? 1 : 1);
-    out.height = canvas.height;
-    // Prefer the chart canvas's native resolution (already DPR-aware)
     out.width = canvas.width;
     out.height = canvas.height;
     const ctx = out.getContext("2d");
     if (!ctx) return false;
-    ctx.fillStyle = "#0a0a0a";
-    ctx.fillRect(0, 0, out.width, out.height);
+    if (fill) {
+      ctx.fillStyle = fill;
+      ctx.fillRect(0, 0, out.width, out.height);
+    }
     ctx.drawImage(canvas, 0, 0);
     const dataUrl = out.toDataURL(mime, format === "jpeg" ? 0.92 : undefined);
     downloadDataUrl(dataUrl, filename);
     return true;
   } catch {
-    // Fallback if tainted (shouldn't happen for local canvas)
     try {
       downloadDataUrl(canvas.toDataURL(mime), filename);
       return true;

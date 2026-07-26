@@ -8,7 +8,7 @@ import { useMemo } from "react";
 export function SankeyChartView({
   categoryData,
   periodData,
-  subtitle,
+  background = "black",
 }: ChartViewProps) {
   const { data, config } = useMemo(() => {
     const income = periodData.reduce((s, r) => s + r.income, 0);
@@ -82,7 +82,7 @@ export function SankeyChartView({
   return (
     <ChartShell
       title="Money flow (sankey)"
-      subtitle={subtitle}
+      background={background}
       filenameBase="funds-sankey"
     >
       {usable ? (

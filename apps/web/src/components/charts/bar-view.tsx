@@ -10,11 +10,11 @@ export function BarChartView({
   categoryData,
   seriesConfig,
   metric,
-  subtitle,
+  background = "black",
 }: ChartViewProps) {
   if (metric === "category") {
     return (
-      <ChartShell title="Spending by category" subtitle={subtitle} filenameBase="funds-bar-category">
+      <ChartShell title="Spending by category" background={background} filenameBase="funds-bar-category">
         <EChartsBarChart
           data={categoryData}
           config={{
@@ -38,7 +38,7 @@ export function BarChartView({
 
   if (metric === "both") {
     return (
-      <ChartShell title="Income vs spending" subtitle={subtitle} filenameBase="funds-bar-cashflow">
+      <ChartShell title="Income vs spending" background={background} filenameBase="funds-bar-cashflow">
         <EChartsBarChart
           data={periodData}
           config={seriesConfig}
@@ -60,7 +60,7 @@ export function BarChartView({
   return (
     <ChartShell
       title={metric === "income" ? "Income over time" : "Spending over time"}
-      subtitle={subtitle}
+      background={background}
       filenameBase={`funds-bar-${metric}`}
     >
       <EChartsBarChart

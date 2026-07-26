@@ -8,15 +8,15 @@
   --font-display: "Comfortaa", ui-sans-serif, system-ui, sans-serif;
   --font-hand: "Architects Daughter", "Patrick Hand", cursive;
 
-  --color-ink: #ffffff;
-  --color-ink-soft: rgba(255, 255, 255, 0.72);
-  --color-moss: #ffffff;
-  --color-leaf: rgba(255, 255, 255, 0.55);
-  --color-mist: transparent;
-  --color-paper: transparent;
-  --color-sand: rgba(255, 255, 255, 0.08);
-  --color-ember: rgba(255, 255, 255, 0.55);
-  --color-muted-text: rgba(255, 255, 255, 0.55);
+  --color-ink: #111111;
+  --color-ink-soft: #3a3a3a;
+  --color-moss: #222222;
+  --color-leaf: #555555;
+  --color-mist: rgba(17, 17, 17, 0.04);
+  --color-paper: #e8e4db;
+  --color-sand: rgba(17, 17, 17, 0.08);
+  --color-ember: #444444;
+  --color-muted-text: #5c5c5c;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -44,25 +44,24 @@
 
 :root {
   --radius: 0.75rem;
-  /* Base stays dark for contrast — surfaces are clear, not black/gray fills */
-  --background: #0a0a0a;
-  --foreground: #ffffff;
-  --card: rgba(255, 255, 255, 0.04);
-  --card-foreground: #ffffff;
-  --popover: rgba(20, 20, 20, 0.92);
-  --popover-foreground: #ffffff;
-  --primary: #ffffff;
-  --primary-foreground: #0a0a0a;
-  --secondary: rgba(255, 255, 255, 0.06);
-  --secondary-foreground: #ffffff;
-  --muted: rgba(255, 255, 255, 0.06);
-  --muted-foreground: rgba(255, 255, 255, 0.55);
-  --accent: rgba(255, 255, 255, 0.1);
-  --accent-foreground: #ffffff;
-  --destructive: #ffffff;
-  --border: rgba(255, 255, 255, 0.22);
-  --input: rgba(255, 255, 255, 0.22);
-  --ring: #ffffff;
+  --background: #e8e4db;
+  --foreground: #111111;
+  --card: rgba(255, 255, 255, 0.35);
+  --card-foreground: #111111;
+  --popover: #f3efe6;
+  --popover-foreground: #111111;
+  --primary: #111111;
+  --primary-foreground: #e8e4db;
+  --secondary: rgba(17, 17, 17, 0.06);
+  --secondary-foreground: #111111;
+  --muted: rgba(17, 17, 17, 0.06);
+  --muted-foreground: #5c5c5c;
+  --accent: rgba(17, 17, 17, 0.08);
+  --accent-foreground: #111111;
+  --destructive: #111111;
+  --border: rgba(17, 17, 17, 0.22);
+  --input: rgba(17, 17, 17, 0.22);
+  --ring: #111111;
 }
 
 @layer base {
@@ -78,31 +77,31 @@
   }
 
   html {
-    color-scheme: dark;
+    color-scheme: light;
   }
 
   body {
     margin: 0;
     font-family: var(--font-sans);
     color: var(--foreground);
-    background-color: #0a0a0a;
-    /* Grid + grain + crumpled paper — no solid black/gray panels */
+    background-color: #e8e4db;
+    /* Dirty paper: light grid + soft squeeze (toned down) + fiber grain */
     background-image:
-      linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
-      radial-gradient(ellipse 120% 80% at 20% 15%, rgb(255 255 255 / 0.045), transparent 45%),
-      radial-gradient(ellipse 90% 70% at 85% 10%, rgb(255 255 255 / 0.03), transparent 50%),
-      url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.12 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grain)'/%3E%3C/svg%3E"),
-      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='crumple'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.012' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeDiffuseLighting surfaceScale='4.5' diffuseConstant='1.15' lighting-color='%23ffffff'%3E%3CfeDistantLight azimuth='220' elevation='48'/%3E%3C/feDiffuseLighting%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.16'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23crumple)'/%3E%3C/svg%3E"),
-      url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='squeeze'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.028' numOctaves='3' seed='19' stitchTiles='stitch'/%3E%3CfeDiffuseLighting surfaceScale='2.8' diffuseConstant='1' lighting-color='%23ffffff'%3E%3CfeDistantLight azimuth='135' elevation='60'/%3E%3C/feDiffuseLighting%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23squeeze)'/%3E%3C/svg%3E");
+      linear-gradient(rgba(17, 17, 17, 0.055) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(17, 17, 17, 0.055) 1px, transparent 1px),
+      radial-gradient(ellipse 90% 70% at 15% 10%, rgb(255 255 255 / 0.35), transparent 50%),
+      radial-gradient(ellipse 80% 60% at 90% 20%, rgb(180 170 150 / 0.22), transparent 55%),
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.05 0 0 0 0 0.05 0 0 0 0 0.04 0 0 0 0.14 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grain)'/%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='crumple'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.014' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeDiffuseLighting surfaceScale='3.5' diffuseConstant='1.1' lighting-color='%23ffffff'%3E%3CfeDistantLight azimuth='220' elevation='48'/%3E%3C/feDiffuseLighting%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.16'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23crumple)'/%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='squeeze'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03' numOctaves='3' seed='19' stitchTiles='stitch'/%3E%3CfeDiffuseLighting surfaceScale='2.4' diffuseConstant='1' lighting-color='%23ffffff'%3E%3CfeDistantLight azimuth='135' elevation='58'/%3E%3C/feDiffuseLighting%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.12'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23squeeze)'/%3E%3C/svg%3E");
     background-size:
-      32px 32px,
-      32px 32px,
+      28px 28px,
+      28px 28px,
       100% 100%,
       100% 100%,
       180px 180px,
-      520px 520px,
-      340px 340px;
+      480px 480px,
+      320px 320px;
     background-attachment: fixed;
   }
 
@@ -138,23 +137,23 @@
 @layer components {
   .panel {
     border-radius: 1.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    background: rgba(255, 255, 255, 0.04);
-    backdrop-filter: blur(12px);
+    border: 1px solid rgba(17, 17, 17, 0.18);
+    background: rgba(255, 255, 255, 0.38);
+    backdrop-filter: blur(8px);
   }
 
   .control {
     width: 100%;
     border-radius: 0.75rem;
     border: 1px solid var(--border);
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.55);
     color: var(--foreground);
     padding: 0.5rem 0.75rem;
     outline: none;
   }
 
   .control:focus {
-    box-shadow: 0 0 0 2px color-mix(in srgb, var(--ring) 40%, transparent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--ring) 35%, transparent);
   }
 
   .control:disabled {
@@ -163,7 +162,7 @@
   }
 
   .control option {
-    background: #141414;
-    color: #ffffff;
+    background: #f3efe6;
+    color: #111111;
   }
 }

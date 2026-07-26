@@ -50,7 +50,7 @@ export function TransactionsPage() {
             to="/charts"
             className={cn(buttonVariants({ size: "sm" }), "w-fit")}
           >
-            View charts
+            Open charts
           </Link>
         </div>
       ) : null}

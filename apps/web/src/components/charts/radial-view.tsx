@@ -9,13 +9,13 @@ export function RadialChartView({
   categoryConfig,
   singleData,
   metric,
-  subtitle,
+  background = "black",
 }: ChartViewProps) {
   if (metric === "category" || categoryData.length) {
     return (
       <ChartShell
         title="Category radial"
-        subtitle={subtitle}
+        background={background}
         filenameBase="funds-radial-category"
       >
         {categoryData.length ? (
@@ -55,7 +55,7 @@ export function RadialChartView({
   });
 
   return (
-    <ChartShell title="Period radial" subtitle={subtitle} filenameBase="funds-radial-period">
+    <ChartShell title="Period radial" background={background} filenameBase="funds-radial-period">
       <EChartsRadialChart
         data={rows}
         config={config}

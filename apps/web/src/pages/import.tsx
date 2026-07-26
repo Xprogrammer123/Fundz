@@ -128,15 +128,12 @@ export function ImportPage() {
         return;
       }
       const count = await importRows(filename, rows, format);
-      setMessage(`Imported ${count} transactions. Opening transactions…`);
+      setMessage(`Imported ${count} transactions. Opening charts…`);
       setPreview(null);
       setPdfRows(null);
       setFilename(null);
       window.setTimeout(() => {
-        navigate("/transactions", {
-          replace: false,
-          state: { importedCount: count },
-        });
+        navigate("/charts", { replace: false });
       }, 450);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Import failed");

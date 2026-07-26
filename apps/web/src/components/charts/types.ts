@@ -24,5 +24,7 @@ export type ChartViewProps = {
   seriesConfig: ChartConfig;
   categoryConfig: ChartConfig;
   metric: "expense" | "income" | "both" | "category";
-  subtitle: string;
+  subtitle?: string;
+  styleId?: string;
+  background?: "black" | "white" | "paper" | "transparent";
 };
