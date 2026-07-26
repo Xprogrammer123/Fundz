@@ -5,18 +5,18 @@
 
 @theme inline {
   --font-sans: "Archivo", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Syne", "Archivo Black", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Comfortaa", ui-sans-serif, system-ui, sans-serif;
   --font-hand: "Architects Daughter", "Patrick Hand", cursive;
 
   --color-ink: #ffffff;
-  --color-ink-soft: #d4d4d4;
-  --color-moss: #e5e5e5;
-  --color-leaf: #a3a3a3;
-  --color-mist: #171717;
-  --color-paper: #000000;
-  --color-sand: #404040;
-  --color-ember: #a3a3a3;
-  --color-muted-text: #a3a3a3;
+  --color-ink-soft: rgba(255, 255, 255, 0.72);
+  --color-moss: #ffffff;
+  --color-leaf: rgba(255, 255, 255, 0.55);
+  --color-mist: transparent;
+  --color-paper: transparent;
+  --color-sand: rgba(255, 255, 255, 0.08);
+  --color-ember: rgba(255, 255, 255, 0.55);
+  --color-muted-text: rgba(255, 255, 255, 0.55);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -44,23 +44,24 @@
 
 :root {
   --radius: 0.75rem;
-  --background: #000000;
+  /* Base stays dark for contrast — surfaces are clear, not black/gray fills */
+  --background: #0a0a0a;
   --foreground: #ffffff;
-  --card: #171717cc;
+  --card: rgba(255, 255, 255, 0.04);
   --card-foreground: #ffffff;
-  --popover: #171717;
+  --popover: rgba(20, 20, 20, 0.92);
   --popover-foreground: #ffffff;
   --primary: #ffffff;
-  --primary-foreground: #000000;
-  --secondary: #262626;
+  --primary-foreground: #0a0a0a;
+  --secondary: rgba(255, 255, 255, 0.06);
   --secondary-foreground: #ffffff;
-  --muted: #262626;
-  --muted-foreground: #a3a3a3;
-  --accent: #404040;
+  --muted: rgba(255, 255, 255, 0.06);
+  --muted-foreground: rgba(255, 255, 255, 0.55);
+  --accent: rgba(255, 255, 255, 0.1);
   --accent-foreground: #ffffff;
   --destructive: #ffffff;
-  --border: #404040;
-  --input: #404040;
+  --border: rgba(255, 255, 255, 0.22);
+  --input: rgba(255, 255, 255, 0.22);
   --ring: #ffffff;
 }
 
@@ -84,23 +85,19 @@
     margin: 0;
     font-family: var(--font-sans);
     color: var(--foreground);
-    background-color: #000000;
-    /* Graph grid + soft light pools + fine grain + squeezed/crumpled paper */
+    background-color: #0a0a0a;
+    /* Grid + grain + crumpled paper — no solid black/gray panels */
     background-image:
-      linear-gradient(rgb(38 38 38 / 0.5) 1px, transparent 1px),
-      linear-gradient(90deg, rgb(38 38 38 / 0.5) 1px, transparent 1px),
+      linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
       radial-gradient(ellipse 120% 80% at 20% 15%, rgb(255 255 255 / 0.045), transparent 45%),
       radial-gradient(ellipse 90% 70% at 85% 10%, rgb(255 255 255 / 0.03), transparent 50%),
-      radial-gradient(ellipse 70% 50% at 60% 90%, rgb(0 0 0 / 0.55), transparent 55%),
-      radial-gradient(ellipse 50% 40% at 10% 70%, rgb(0 0 0 / 0.4), transparent 50%),
-      url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.14 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grain)'/%3E%3C/svg%3E"),
-      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='crumple'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.012' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeDiffuseLighting surfaceScale='4.5' diffuseConstant='1.15' lighting-color='%23ffffff'%3E%3CfeDistantLight azimuth='220' elevation='48'/%3E%3C/feDiffuseLighting%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.22'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23crumple)'/%3E%3C/svg%3E"),
-      url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='squeeze'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.028' numOctaves='3' seed='19' stitchTiles='stitch'/%3E%3CfeDiffuseLighting surfaceScale='2.8' diffuseConstant='1' lighting-color='%23ffffff'%3E%3CfeDistantLight azimuth='135' elevation='60'/%3E%3C/feDiffuseLighting%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.12'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23squeeze)'/%3E%3C/svg%3E");
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.12 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grain)'/%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='crumple'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.012' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeDiffuseLighting surfaceScale='4.5' diffuseConstant='1.15' lighting-color='%23ffffff'%3E%3CfeDistantLight azimuth='220' elevation='48'/%3E%3C/feDiffuseLighting%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.16'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23crumple)'/%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='squeeze'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.028' numOctaves='3' seed='19' stitchTiles='stitch'/%3E%3CfeDiffuseLighting surfaceScale='2.8' diffuseConstant='1' lighting-color='%23ffffff'%3E%3CfeDistantLight azimuth='135' elevation='60'/%3E%3C/feDiffuseLighting%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23squeeze)'/%3E%3C/svg%3E");
     background-size:
       32px 32px,
       32px 32px,
-      100% 100%,
-      100% 100%,
       100% 100%,
       100% 100%,
       180px 180px,
@@ -125,9 +122,9 @@
 @layer utilities {
   .font-display {
     font-family: var(--font-display);
-    font-weight: 800;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-transform: none;
   }
 
   .font-hand {
@@ -141,16 +138,16 @@
 @layer components {
   .panel {
     border-radius: 1.5rem;
-    border: 1px solid rgb(64 64 64 / 0.95);
-    background: rgb(23 23 23 / 0.78);
-    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(12px);
   }
 
   .control {
     width: 100%;
     border-radius: 0.75rem;
     border: 1px solid var(--border);
-    background: rgb(0 0 0 / 0.75);
+    background: rgba(255, 255, 255, 0.06);
     color: var(--foreground);
     padding: 0.5rem 0.75rem;
     outline: none;
@@ -166,7 +163,7 @@
   }
 
   .control option {
-    background: #000000;
+    background: #141414;
     color: #ffffff;
   }
 }

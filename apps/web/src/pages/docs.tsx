@@ -4,7 +4,9 @@ export function DocsPage() {
   return (
     <article className="mx-auto max-w-3xl space-y-10 pb-16">
       <header className="space-y-3">
-        <h1 className="font-display text-4xl text-ink">Funds documentation</h1>
+        <h1 className="font-display text-5xl text-ink sm:text-6xl">
+          Funds documentation
+        </h1>
         <p className="text-muted-foreground">
           Everything about how Funds works, why it is local-first, how to import
           bank statements, read charts, export data, and stay safe.

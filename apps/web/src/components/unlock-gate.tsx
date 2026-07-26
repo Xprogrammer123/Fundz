@@ -32,7 +32,9 @@ export function UnlockGate({ children }: { children: React.ReactNode }) {
 
     return (
       <div className="mx-auto flex min-h-dvh max-w-lg flex-col justify-center px-4">
-        <h1 className="font-display text-5xl text-ink">Funds</h1>
+        <h1 className="font-display text-6xl leading-none text-ink sm:text-7xl">
+          Funds
+        </h1>
         <p className="font-hand mt-3 text-xl text-ink-soft">
           A local-first statement analyzer. Your SQLite vault stays in this
           browser — nothing is uploaded.
@@ -72,7 +74,9 @@ export function UnlockGate({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-lg flex-col justify-center px-4">
-      <h1 className="font-display text-5xl text-ink">Unlock</h1>
+      <h1 className="font-display text-6xl leading-none text-ink sm:text-7xl">
+        Unlock
+      </h1>
       <p className="font-hand mt-3 text-xl text-ink-soft">
         Enter the passphrase for the vault stored on this device.
       </p>

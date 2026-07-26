@@ -196,7 +196,7 @@ export function ChartsPage() {
   if (!txCount) {
     return (
       <div className="space-y-3">
-        <h1 className="font-display text-3xl">Charts</h1>
+        <h1 className="font-display text-4xl sm:text-5xl">Charts</h1>
         <p className="panel p-8 text-sm text-muted-foreground">
           Import transactions to explore spending by day, month, or year — then
           export any chart as PNG/JPG.
@@ -208,7 +208,7 @@ export function ChartsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-3xl">Charts</h1>
+        <h1 className="font-display text-4xl sm:text-5xl">Charts</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Pick a chart style, filter the period, and export images locally.
         </p>

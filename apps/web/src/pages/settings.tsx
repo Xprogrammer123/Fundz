@@ -42,7 +42,7 @@ export function SettingsPage() {
   return (
     <div className="mx-auto max-w-xl space-y-8">
       <div>
-        <h1 className="font-display text-3xl">Settings</h1>
+        <h1 className="font-display text-4xl sm:text-5xl">Settings</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Everything below only affects data stored in this browser.
         </p>

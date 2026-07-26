@@ -20,7 +20,7 @@ export function HomePage() {
         />
         <div className="relative max-w-xl">
           <p className="font-hand text-xl text-ink-soft">local-first finance</p>
-          <h1 className="font-display mt-2 text-4xl leading-tight text-ink sm:text-5xl">
+          <h1 className="font-display mt-2 text-5xl leading-tight text-ink sm:text-6xl">
             Your statements. Your machine.
           </h1>
           <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">

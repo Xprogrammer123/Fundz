@@ -148,7 +148,7 @@ export function ImportPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-3xl">Import</h1>
+        <h1 className="font-display text-4xl sm:text-5xl">Import</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Drop a CSV or PDF bank export. Mapping runs locally; the file never
           leaves this device.
