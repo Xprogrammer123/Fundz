@@ -20,7 +20,7 @@ const wipeBtn = document.getElementById("wipe") as HTMLButtonElement;
 
 function setStatus(message: string, isError = false): void {
   statusEl.textContent = message;
-  statusEl.style.color = isError ? "#c45c26" : "#2f6f5e";
+  statusEl.style.color = isError ? "#a3a3a3" : "#ffffff";
 }
 
 async function loadStored(): Promise<NormalizedRow[]> {

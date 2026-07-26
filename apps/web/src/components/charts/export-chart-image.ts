@@ -38,7 +38,7 @@ export function exportChartImage(
     out.height = canvas.height;
     const ctx = out.getContext("2d");
     if (!ctx) return false;
-    ctx.fillStyle = "#f4f7f5";
+    ctx.fillStyle = "#000000";
     ctx.fillRect(0, 0, out.width, out.height);
     ctx.drawImage(canvas, 0, 0);
     const dataUrl = out.toDataURL(mime, format === "jpeg" ? 0.92 : undefined);

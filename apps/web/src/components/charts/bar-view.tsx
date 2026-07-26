@@ -1,6 +1,7 @@
 import { ChartShell } from "@/components/charts/chart-shell";
 import type { ChartViewProps } from "@/components/charts/types";
 import { EChartsBarChart } from "@/components/evilcharts/charts/echarts-bar-chart";
+import { seriesColors } from "@/lib/mono";
 
 /** Bar chart view — paste EvilCharts bar style variants here later. */
 export function BarChartView({
@@ -19,7 +20,7 @@ export function BarChartView({
           config={{
             total: {
               label: "Spending",
-              colors: { light: ["#c45c26"], dark: ["#e07a45"] },
+              colors: seriesColors("expense"),
             },
           }}
           className="h-80 w-full"

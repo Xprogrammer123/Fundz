@@ -16,8 +16,8 @@ export default defineConfig({
         short_name: "Funds",
         description:
           "Local-first bank statement analyzer. Your data never leaves this device.",
-        theme_color: "#0f1f1a",
-        background_color: "#0f1f1a",
+        theme_color: "#000000",
+        background_color: "#000000",
         display: "standalone",
         start_url: "/",
         icons: [

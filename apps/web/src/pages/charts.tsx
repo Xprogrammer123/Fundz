@@ -9,6 +9,7 @@ import { SankeyChartView } from "@/components/charts/sankey-view";
 import type { ChartViewProps } from "@/components/charts/types";
 import type { ChartConfig } from "@/components/evilcharts/ui/echarts-chart";
 import { useVault } from "@/db/vault";
+import { CHART_PALETTE, seriesColors } from "@/lib/mono";
 import { cn, formatMoney } from "@/lib/utils";
 import {
   aggregateByPeriod,
@@ -19,17 +20,6 @@ import {
   type PeriodGrain,
 } from "@funds/core";
 import { useEffect, useMemo, useState, type ComponentType } from "react";
-
-const PALETTE = [
-  "#2f6f5e",
-  "#7dcea0",
-  "#c45c26",
-  "#1a332b",
-  "#5c7268",
-  "#4a9b7f",
-  "#d4a017",
-  "#3d5a80",
-];
 
 type ChartType =
   | "bar"
@@ -158,21 +148,18 @@ export function ChartsPage() {
       return {
         income: {
           label: "Income",
-          colors: { light: ["#2f6f5e"], dark: ["#7dcea0"] },
+          colors: seriesColors("income"),
         },
         expense: {
           label: "Spending",
-          colors: { light: ["#c45c26"], dark: ["#e07a45"] },
+          colors: seriesColors("expense"),
         },
       };
     }
     return {
       value: {
         label: metric === "income" ? "Income" : "Spending",
-        colors: {
-          light: [metric === "income" ? "#2f6f5e" : "#c45c26"],
-          dark: [metric === "income" ? "#7dcea0" : "#e07a45"],
-        },
+        colors: seriesColors(metric === "income" ? "income" : "expense"),
       },
     };
   }, [metric, chartType]);
@@ -185,7 +172,7 @@ export function ChartsPage() {
   const categoryConfig = useMemo(() => {
     const config: ChartConfig = {};
     categoryData.forEach((row, i) => {
-      const color = PALETTE[i % PALETTE.length]!;
+      const color = CHART_PALETTE[i % CHART_PALETTE.length]!;
       config[row.category] = {
         label: row.category,
         colors: { light: [color], dark: [color] },
@@ -357,10 +344,10 @@ export function ChartsPage() {
                   <td className="px-4 py-3 font-medium">
                     {formatPeriodLabel(b.period, grain)}
                   </td>
-                  <td className="px-4 py-3 text-right text-moss">
+                  <td className="px-4 py-3 text-right text-ink">
                     {formatMoney(b.income, currency)}
                   </td>
-                  <td className="px-4 py-3 text-right text-ember">
+                  <td className="px-4 py-3 text-right text-ink-soft">
                     {formatMoney(b.expense, currency)}
                   </td>
                   <td className="px-4 py-3 text-right">

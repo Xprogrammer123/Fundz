@@ -1,6 +1,7 @@
 import { ChartShell } from "@/components/charts/chart-shell";
 import type { ChartViewProps } from "@/components/charts/types";
 import { EChartsComposedChart } from "@/components/evilcharts/charts/echarts-composed-chart";
+import { seriesColors } from "@/lib/mono";
 
 /** Composed chart view — paste EvilCharts composed style variants here later. */
 export function ComposedChartView({
@@ -23,7 +24,7 @@ export function ComposedChartView({
     ...seriesConfig,
     net: {
       label: "Net",
-      colors: { light: ["#1a332b"], dark: ["#7dcea0"] },
+      colors: seriesColors("net"),
     },
   };
 

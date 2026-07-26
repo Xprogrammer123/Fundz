@@ -1,12 +1,11 @@
 :root {
-  color-scheme: light;
-  --ink: #0f1f1a;
-  --moss: #2f6f5e;
-  --leaf: #7dcea0;
-  --paper: #f4f7f5;
-  --muted: #5c7268;
-  --danger: #c45c26;
-  --border: #c5d4cb;
+  color-scheme: dark;
+  --ink: #ffffff;
+  --paper: #000000;
+  --muted: #a3a3a3;
+  --danger: #d4d4d4;
+  --border: #404040;
+  --panel: #171717;
   font-family: "Segoe UI", system-ui, sans-serif;
 }
 
@@ -17,7 +16,7 @@
 body {
   margin: 0;
   width: 320px;
-  background: linear-gradient(180deg, var(--paper), #e8f0eb);
+  background: #000000;
   color: var(--ink);
 }
 
@@ -44,9 +43,9 @@ h1 {
   display: grid;
   gap: 6px;
   padding: 14px;
-  border: 1px dashed color-mix(in srgb, var(--moss) 45%, white);
+  border: 1px dashed var(--border);
   border-radius: 14px;
-  background: rgb(255 255 255 / 0.65);
+  background: var(--panel);
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -55,13 +54,14 @@ h1 {
 .file input {
   font-size: 0.75rem;
   font-weight: 400;
+  color: var(--muted);
 }
 
 .status {
   min-height: 1.2em;
   margin: 0;
   font-size: 0.8rem;
-  color: var(--moss);
+  color: var(--ink);
 }
 
 .actions {
@@ -74,8 +74,8 @@ button {
   border: 0;
   border-radius: 10px;
   padding: 0.55rem 0.75rem;
-  background: var(--moss);
-  color: var(--paper);
+  background: #ffffff;
+  color: #000000;
   font: inherit;
   font-size: 0.85rem;
   font-weight: 600;
@@ -90,7 +90,7 @@ button:disabled {
 button.danger {
   background: transparent;
   color: var(--danger);
-  border: 1px solid color-mix(in srgb, var(--danger) 40%, white);
+  border: 1px solid var(--border);
 }
 
 .foot {
@@ -100,5 +100,6 @@ button.danger {
 }
 
 .foot a {
-  color: var(--moss);
+  color: #ffffff;
+  text-decoration: underline;
 }

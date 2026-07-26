@@ -1,6 +1,7 @@
 import { ChartShell } from "@/components/charts/chart-shell";
 import type { ChartViewProps } from "@/components/charts/types";
 import { EChartsRadarChart } from "@/components/evilcharts/charts/echarts-radar-chart";
+import { seriesColors } from "@/lib/mono";
 
 /** Radar chart view — paste EvilCharts radar style variants here later. */
 export function RadarChartView({
@@ -27,7 +28,7 @@ export function RadarChartView({
             config={{
               spending: {
                 label: "Spending",
-                colors: { light: ["#c45c26"], dark: ["#e07a45"] },
+                colors: seriesColors("expense"),
               },
             }}
             className="h-80 w-full"
@@ -59,11 +60,11 @@ export function RadarChartView({
         config={{
           income: {
             label: "Income",
-            colors: { light: ["#2f6f5e"], dark: ["#7dcea0"] },
+            colors: seriesColors("income"),
           },
           expense: {
             label: "Spending",
-            colors: { light: ["#c45c26"], dark: ["#e07a45"] },
+            colors: seriesColors("expense"),
           },
         }}
         className="h-80 w-full"

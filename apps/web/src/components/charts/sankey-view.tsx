@@ -1,6 +1,7 @@
 import { ChartShell } from "@/components/charts/chart-shell";
 import type { ChartViewProps } from "@/components/charts/types";
 import { EChartsSankeyChart } from "@/components/evilcharts/charts/echarts-sankey-chart";
+import { CHART_PALETTE, seriesColors } from "@/lib/mono";
 import { useMemo } from "react";
 
 /** Sankey chart view — paste EvilCharts sankey style variants here later. */
@@ -54,20 +55,19 @@ export function SankeyChartView({
     > = {
       Income: {
         label: "Income",
-        colors: { light: ["#2f6f5e"], dark: ["#7dcea0"] },
+        colors: seriesColors("income"),
       },
       Spending: {
         label: "Spending",
-        colors: { light: ["#c45c26"], dark: ["#e07a45"] },
+        colors: seriesColors("expense"),
       },
       "Net saved": {
         label: "Net saved",
-        colors: { light: ["#1a332b"], dark: ["#5c7268"] },
+        colors: seriesColors("net"),
       },
     };
-    const palette = ["#7dcea0", "#4a9b7f", "#d4a017", "#3d5a80", "#5c7268"];
     cats.forEach((c, i) => {
-      const color = palette[i % palette.length]!;
+      const color = CHART_PALETTE[i % CHART_PALETTE.length]!;
       config[c.category] = {
         label: c.category,
         colors: { light: [color], dark: [color] },

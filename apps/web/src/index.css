@@ -9,14 +9,14 @@
   --font-hand: "Architects Daughter", "Patrick Hand", cursive;
 
   --color-ink: #ffffff;
-  --color-ink-soft: #d9e0e6;
-  --color-moss: #a8c5d4;
-  --color-leaf: #c5d6e0;
-  --color-mist: #293241;
-  --color-paper: #001219;
-  --color-sand: #3d4f63;
-  --color-ember: #f4a261;
-  --color-muted-text: #9aa8b5;
+  --color-ink-soft: #d4d4d4;
+  --color-moss: #e5e5e5;
+  --color-leaf: #a3a3a3;
+  --color-mist: #171717;
+  --color-paper: #000000;
+  --color-sand: #404040;
+  --color-ember: #a3a3a3;
+  --color-muted-text: #a3a3a3;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -44,23 +44,23 @@
 
 :root {
   --radius: 0.75rem;
-  --background: #001219;
+  --background: #000000;
   --foreground: #ffffff;
-  --card: #293241cc;
+  --card: #171717cc;
   --card-foreground: #ffffff;
-  --popover: #293241;
+  --popover: #171717;
   --popover-foreground: #ffffff;
   --primary: #ffffff;
-  --primary-foreground: #001219;
-  --secondary: #293241;
+  --primary-foreground: #000000;
+  --secondary: #262626;
   --secondary-foreground: #ffffff;
-  --muted: #293241;
-  --muted-foreground: #9aa8b5;
-  --accent: #3d4f63;
+  --muted: #262626;
+  --muted-foreground: #a3a3a3;
+  --accent: #404040;
   --accent-foreground: #ffffff;
-  --destructive: #e76f51;
-  --border: #3d4f63;
-  --input: #3d4f63;
+  --destructive: #ffffff;
+  --border: #404040;
+  --input: #404040;
   --ring: #ffffff;
 }
 
@@ -84,26 +84,21 @@
     margin: 0;
     font-family: var(--font-sans);
     color: var(--foreground);
-    background-color: #001219;
-    /* Dark crumpled paper + graph grid */
+    background-color: #000000;
     background-image:
-      linear-gradient(rgb(41 50 65 / 0.55) 1px, transparent 1px),
-      linear-gradient(90deg, rgb(41 50 65 / 0.55) 1px, transparent 1px),
-      radial-gradient(ellipse 120% 80% at 20% 15%, rgb(255 255 255 / 0.035), transparent 45%),
-      radial-gradient(ellipse 90% 70% at 85% 10%, rgb(41 50 65 / 0.45), transparent 50%),
-      radial-gradient(ellipse 70% 50% at 60% 90%, rgb(0 0 0 / 0.35), transparent 55%),
-      radial-gradient(ellipse 50% 40% at 10% 70%, rgb(0 0 0 / 0.28), transparent 50%),
-      url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paper'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.16 0 0 0 0 0.20 0 0 0 0 0.25 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paper)'/%3E%3C/svg%3E"),
-      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='crumple'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.015' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeDiffuseLighting surfaceScale='3' diffuseConstant='1.1' lighting-color='%23ffffff'%3E%3CfeDistantLight azimuth='225' elevation='55'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23crumple)' opacity='0.07'/%3E%3C/svg%3E");
+      linear-gradient(rgb(38 38 38 / 0.55) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(38 38 38 / 0.55) 1px, transparent 1px),
+      radial-gradient(ellipse 120% 80% at 20% 15%, rgb(255 255 255 / 0.04), transparent 45%),
+      radial-gradient(ellipse 90% 70% at 85% 10%, rgb(255 255 255 / 0.03), transparent 50%),
+      radial-gradient(ellipse 70% 50% at 60% 90%, rgb(0 0 0 / 0.5), transparent 55%),
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paper'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paper)'/%3E%3C/svg%3E");
     background-size:
       32px 32px,
       32px 32px,
       100% 100%,
       100% 100%,
       100% 100%,
-      100% 100%,
-      220px 220px,
-      480px 480px;
+      220px 220px;
     background-attachment: fixed;
   }
 
@@ -139,8 +134,8 @@
 @layer components {
   .panel {
     border-radius: 1.5rem;
-    border: 1px solid rgb(61 79 99 / 0.9);
-    background: rgb(41 50 65 / 0.72);
+    border: 1px solid rgb(64 64 64 / 0.95);
+    background: rgb(23 23 23 / 0.78);
     backdrop-filter: blur(10px);
   }
 
@@ -148,14 +143,14 @@
     width: 100%;
     border-radius: 0.75rem;
     border: 1px solid var(--border);
-    background: rgb(0 18 25 / 0.65);
+    background: rgb(0 0 0 / 0.75);
     color: var(--foreground);
     padding: 0.5rem 0.75rem;
     outline: none;
   }
 
   .control:focus {
-    box-shadow: 0 0 0 2px color-mix(in srgb, var(--ring) 35%, transparent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--ring) 40%, transparent);
   }
 
   .control:disabled {
@@ -164,7 +159,7 @@
   }
 
   .control option {
-    background: #001219;
+    background: #000000;
     color: #ffffff;
   }
 }

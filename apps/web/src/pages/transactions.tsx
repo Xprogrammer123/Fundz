@@ -111,7 +111,7 @@ export function TransactionsPage() {
                   </td>
                   <td
                     className={`px-4 py-3 text-right font-medium whitespace-nowrap ${
-                      t.amount < 0 ? "text-ember" : "text-moss"
+                      t.amount < 0 ? "text-ink-soft" : "text-ink"
                     }`}
                   >
                     {formatMoney(t.amount, account?.currency ?? "USD")}

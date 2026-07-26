@@ -1,6 +1,7 @@
 import { ChartShell } from "@/components/charts/chart-shell";
 import type { ChartViewProps } from "@/components/charts/types";
 import { EChartsRadialChart } from "@/components/evilcharts/charts/echarts-radial-chart";
+import { CHART_PALETTE } from "@/lib/mono";
 
 /** Radial chart view — paste EvilCharts radial style variants here later. */
 export function RadialChartView({
@@ -46,8 +47,7 @@ export function RadialChartView({
     { label: string; colors: { light: string[]; dark: string[] } }
   > = {};
   rows.forEach((r, i) => {
-    const colors = ["#2f6f5e", "#7dcea0", "#c45c26", "#5c7268"];
-    const color = colors[i % colors.length]!;
+    const color = CHART_PALETTE[i % CHART_PALETTE.length]!;
     config[r.category] = {
       label: r.category,
       colors: { light: [color], dark: [color] },

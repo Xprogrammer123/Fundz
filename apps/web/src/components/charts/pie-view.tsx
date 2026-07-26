@@ -1,17 +1,7 @@
 import { ChartShell } from "@/components/charts/chart-shell";
 import type { ChartViewProps } from "@/components/charts/types";
 import { EChartsPieChart } from "@/components/evilcharts/charts/echarts-pie-chart";
-
-const FALLBACK = [
-  "#2f6f5e",
-  "#7dcea0",
-  "#c45c26",
-  "#1a332b",
-  "#5c7268",
-  "#4a9b7f",
-  "#d4a017",
-  "#3d5a80",
-];
+import { CHART_PALETTE } from "@/lib/mono";
 
 /** Pie chart view — paste EvilCharts pie style variants here later. */
 export function PieChartView({
@@ -54,7 +44,7 @@ export function PieChartView({
   const config: Record<string, { label: string; colors: { light: string[]; dark: string[] } }> =
     {};
   pieRows.forEach((row, i) => {
-    const color = FALLBACK[i % FALLBACK.length]!;
+    const color = CHART_PALETTE[i % CHART_PALETTE.length]!;
     config[row.name] = {
       label: row.name,
       colors: { light: [color], dark: [color] },
