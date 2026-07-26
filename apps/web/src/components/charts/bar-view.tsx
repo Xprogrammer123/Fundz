@@ -1,17 +1,23 @@
 import { ChartShell } from "@/components/charts/chart-shell";
 import type { ChartViewProps } from "@/components/charts/types";
 import { EChartsBarChart } from "@/components/evilcharts/charts/echarts-bar-chart";
-import { seriesColors } from "@/lib/mono";
+import { MONO } from "@/lib/mono";
+import { formatAxisMoney } from "@/lib/utils";
 
 /** Bar chart view — paste EvilCharts bar style variants here later. */
 export function BarChartView({
   periodData,
   singleData,
   categoryData,
-  seriesConfig,
   metric,
   background = "black",
+  currency = "USD",
+  barColors,
 }: ChartViewProps) {
+  const primary = barColors?.primary ?? MONO.gray500;
+  const secondary = barColors?.secondary ?? MONO.black;
+  const axisMoney = (value: string) => formatAxisMoney(Number(value), currency);
+
   if (metric === "category") {
     return (
       <ChartShell title="Spending by category" background={background} filenameBase="funds-bar-category">
@@ -20,7 +26,7 @@ export function BarChartView({
           config={{
             total: {
               label: "Spending",
-              colors: seriesColors("expense"),
+              colors: { light: [primary], dark: [primary] },
             },
           }}
           className="h-80 w-full"
@@ -28,7 +34,7 @@ export function BarChartView({
         >
           <EChartsBarChart.Grid />
           <EChartsBarChart.XAxis dataKey="category" />
-          <EChartsBarChart.YAxis />
+          <EChartsBarChart.YAxis tickFormatter={axisMoney} />
           <EChartsBarChart.Tooltip />
           <EChartsBarChart.Bar dataKey="total" variant="gradient" />
         </EChartsBarChart>
@@ -37,17 +43,27 @@ export function BarChartView({
   }
 
   if (metric === "both") {
+    const config = {
+      income: {
+        label: "Income",
+        colors: { light: [secondary], dark: [secondary] },
+      },
+      expense: {
+        label: "Spending",
+        colors: { light: [primary], dark: [primary] },
+      },
+    };
     return (
       <ChartShell title="Income vs spending" background={background} filenameBase="funds-bar-cashflow">
         <EChartsBarChart
           data={periodData}
-          config={seriesConfig}
+          config={config}
           className="h-80 w-full"
           xDataKey="period"
         >
           <EChartsBarChart.Grid />
           <EChartsBarChart.XAxis dataKey="period" />
-          <EChartsBarChart.YAxis />
+          <EChartsBarChart.YAxis tickFormatter={axisMoney} />
           <EChartsBarChart.Legend />
           <EChartsBarChart.Tooltip />
           <EChartsBarChart.Bar dataKey="income" variant="gradient" />
@@ -57,6 +73,8 @@ export function BarChartView({
     );
   }
 
+  const valueColor = metric === "income" ? secondary : primary;
+
   return (
     <ChartShell
       title={metric === "income" ? "Income over time" : "Spending over time"}
@@ -65,13 +83,18 @@ export function BarChartView({
     >
       <EChartsBarChart
         data={singleData}
-        config={seriesConfig}
+        config={{
+          value: {
+            label: metric === "income" ? "Income" : "Spending",
+            colors: { light: [valueColor], dark: [valueColor] },
+          },
+        }}
         className="h-80 w-full"
         xDataKey="period"
       >
         <EChartsBarChart.Grid />
         <EChartsBarChart.XAxis dataKey="period" />
-        <EChartsBarChart.YAxis />
+        <EChartsBarChart.YAxis tickFormatter={axisMoney} />
         <EChartsBarChart.Tooltip />
         <EChartsBarChart.Bar dataKey="value" variant="gradient" />
       </EChartsBarChart>

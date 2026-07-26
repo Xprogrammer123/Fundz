@@ -27,4 +27,8 @@ export type ChartViewProps = {
   subtitle?: string;
   styleId?: string;
   background?: "black" | "white" | "paper" | "transparent";
+  /** ISO currency from the imported statement */
+  currency?: string;
+  /** Custom bar/series ink colors (primary = spending, secondary = income) */
+  barColors?: { primary: string; secondary: string };
 };

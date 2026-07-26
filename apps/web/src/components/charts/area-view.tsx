@@ -28,6 +28,7 @@ export function AreaChartView({
   metric,
   styleId = "layers",
   background = "black",
+  currency = "USD",
 }: ChartViewProps) {
   const style = (
     ["layers", "compare", "benchmark", "spotlight"].includes(styleId)
@@ -53,16 +54,17 @@ export function AreaChartView({
           periodData={periodData}
           singleData={singleData}
           seriesConfig={seriesConfig}
+          currency={currency}
         />
       ) : null}
       {style === "compare" ? (
-        <CompareStyle metric={metric} periodData={periodData} singleData={singleData} />
+        <CompareStyle metric={metric} periodData={periodData} singleData={singleData} currency={currency} />
       ) : null}
       {style === "benchmark" ? (
-        <BenchmarkStyle metric={metric} periodData={periodData} singleData={singleData} />
+        <BenchmarkStyle metric={metric} periodData={periodData} singleData={singleData} currency={currency} />
       ) : null}
       {style === "spotlight" ? (
-        <SpotlightStyle metric={metric} singleData={singleData} periodData={periodData} />
+        <SpotlightStyle metric={metric} singleData={singleData} periodData={periodData} currency={currency} />
       ) : null}
     </ChartShell>
   );
@@ -74,11 +76,13 @@ function LayersStyle({
   periodData,
   singleData,
   seriesConfig,
+  currency,
 }: {
   metric: ChartViewProps["metric"];
   periodData: PeriodRow[];
   singleData: SingleSeriesRow[];
   seriesConfig: ChartConfig;
+  currency: string;
 }) {
   const [selected, setSelected] = useState<string | null>(null);
 
@@ -132,7 +136,7 @@ function LayersStyle({
               </div>
               <div className="leading-none">
                 <span className="text-primary text-sm font-medium tracking-tight sm:text-xl">
-                  {formatMoney(value)}
+                  {formatMoney(value, currency)}
                 </span>
               </div>
             </button>
@@ -179,7 +183,7 @@ function LayersStyle({
         <span className="size-2 shrink-0 rounded-[2px]" style={{ backgroundColor: color }} />
         <span className="text-xs font-medium text-primary">{label}</span>
         <span className="text-sm font-medium tracking-tight text-primary sm:text-xl">
-          {formatMoney(latest)}
+          {formatMoney(latest, currency)}
         </span>
       </div>
       <EChartsAreaChart
@@ -205,10 +209,12 @@ function CompareStyle({
   metric,
   periodData,
   singleData,
+  currency,
 }: {
   metric: ChartViewProps["metric"];
   periodData: PeriodRow[];
   singleData: SingleSeriesRow[];
+  currency: string;
 }) {
   if (metric === "both") {
     const first = periodData[0];
@@ -267,7 +273,7 @@ function CompareStyle({
               </div>
               <div className={delta < 0 ? "text-rose-400" : "text-emerald-400"}>
                 {delta < 0 ? "−" : "+"}
-                {formatMoney(Math.abs(delta))}
+                {formatMoney(Math.abs(delta), currency)}
               </div>
             </div>
           ))}
@@ -332,7 +338,7 @@ function CompareStyle({
         </div>
         <div className={delta < 0 ? "text-rose-400" : "text-emerald-400"}>
           {delta < 0 ? "−" : "+"}
-          {formatMoney(Math.abs(delta))}
+          {formatMoney(Math.abs(delta), currency)}
         </div>
       </div>
 
@@ -367,10 +373,12 @@ function BenchmarkStyle({
   metric,
   periodData,
   singleData,
+  currency,
 }: {
   metric: ChartViewProps["metric"];
   periodData: PeriodRow[];
   singleData: SingleSeriesRow[];
+  currency: string;
 }) {
   if (metric === "both") {
     const latest = periodData[periodData.length - 1];
@@ -396,7 +404,7 @@ function BenchmarkStyle({
             <span className="text-xs text-muted-foreground">Spending vs income</span>
             <div className="flex flex-wrap items-baseline gap-2">
               <span className="text-2xl font-semibold tracking-tight text-primary sm:text-3xl">
-                {formatMoney(actual)}
+                {formatMoney(actual, currency)}
               </span>
               <span
                 className={cn(
@@ -466,7 +474,7 @@ function BenchmarkStyle({
           <span className="text-xs text-muted-foreground">{label} vs average</span>
           <div className="flex flex-wrap items-baseline gap-2">
             <span className="text-2xl font-semibold tracking-tight text-primary sm:text-3xl">
-              {formatMoney(latest?.actual ?? 0)}
+              {formatMoney(latest?.actual ?? 0, currency)}
             </span>
             <span
               className={cn(
@@ -526,10 +534,12 @@ function SpotlightStyle({
   metric,
   singleData,
   periodData,
+  currency,
 }: {
   metric: ChartViewProps["metric"];
   singleData: SingleSeriesRow[];
   periodData: PeriodRow[];
+  currency: string;
 }) {
   const rows =
     metric === "both"
@@ -568,7 +578,7 @@ function SpotlightStyle({
         </div>
         <div className="flex shrink-0 flex-col items-end gap-2">
           <span className="text-2xl font-semibold tracking-tight text-primary sm:text-4xl">
-            {formatMoney(total)}
+            {formatMoney(total, currency)}
           </span>
           <span className="text-xs text-muted-foreground">Total {label.toLowerCase()}</span>
         </div>

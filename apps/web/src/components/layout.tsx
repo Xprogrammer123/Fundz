@@ -3,7 +3,6 @@ import { OfflineBadge } from "@/components/offline-badge";
 import {
   SidebarBrand,
   SidebarFlyout,
-  SidebarMark,
   SidebarRail,
   flyoutLinkClass,
   railLinkClass,
@@ -13,6 +12,7 @@ import { cn } from "@/lib/utils";
 import {
   Analytics01Icon,
   BookOpen01Icon,
+  ChartIcon,
   Home01Icon,
   Settings01Icon,
   TransactionHistoryIcon,
@@ -20,7 +20,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { motion } from "motion/react";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 
 const baseLinks = [
   { to: "/", label: "Home", end: true, icon: Home01Icon, hint: "start" },
@@ -55,9 +55,16 @@ export function AppLayout() {
           aria-label="Main navigation"
         >
           <SidebarRail>
-            <SidebarMark />
+            <Link
+              to="/"
+              title="Home"
+              className="relative z-10 mb-2 flex size-12 shrink-0 items-center justify-center rounded-full transition-transform hover:-rotate-6 hover:scale-105"
+            >
+              <HugeiconsIcon icon={ChartIcon} size={22} strokeWidth={1.6} />
+              <span className="sr-only">Funds home</span>
+            </Link>
 
-            <nav className="relative z-10 flex flex-1 flex-col items-center gap-1.5 mt-10">
+            <nav className="relative z-10 flex flex-1 flex-col items-center gap-1.5 mt-8">
               {links.map((link, i) => (
                 <motion.div
                   key={link.to}
@@ -82,8 +89,6 @@ export function AppLayout() {
                 </motion.div>
               ))}
             </nav>
-
-  
           </SidebarRail>
 
           <SidebarFlyout
@@ -124,8 +129,9 @@ export function AppLayout() {
 
       <div
         className={cn(
-          "mx-auto flex min-h-dvh w-full max-w-6xl flex-col px-4 pt-6 pb-24 sm:px-6 lg:px-8",
-          "pl-[7.25rem] sm:pl-32",
+          "mx-auto flex min-h-dvh w-full flex-col px-4 pt-6 pb-24 sm:px-6 lg:px-8",
+          isChartsStudio ? "max-w-7xl" : "max-w-6xl",
+          "pl-[6.5rem] sm:pl-28",
         )}
       >
         {!isChartsStudio && !isHome ? (

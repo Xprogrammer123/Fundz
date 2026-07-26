@@ -21,6 +21,7 @@ import {
 export type ChartSession = {
   importId: string;
   filename: string | null;
+  currency: string;
   transactions: Transaction[];
 };
 
@@ -43,6 +44,7 @@ type VaultState = {
     filename: string | null,
     rows: NormalizedRow[],
     format?: "csv" | "pdf",
+    currency?: string,
   ) => Promise<number>;
   refresh: () => Promise<void>;
   updateCategory: (id: string, category: string | null) => Promise<void>;
@@ -155,14 +157,17 @@ export function VaultProvider({ children }: { children: ReactNode }) {
       filename: string | null,
       rows: NormalizedRow[],
       format: "csv" | "pdf" = "csv",
+      currency = "USD",
     ) => {
       if (!db || !account) throw new Error("Vault is not open");
+      db.updateAccountCurrency(account.id, currency);
       const record = db.importRows(account.id, filename, rows, format);
       await db.persist();
       await hydrate(db);
       setChartSession({
         importId: record.id,
         filename,
+        currency,
         transactions: db.listTransactionsByImport(record.id),
       });
       return record.rowCount;
@@ -180,6 +185,7 @@ export function VaultProvider({ children }: { children: ReactNode }) {
         if (!prev) return prev;
         return {
           ...prev,
+          currency: prev.currency,
           transactions: db.listTransactionsByImport(prev.importId),
         };
       });

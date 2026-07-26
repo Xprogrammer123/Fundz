@@ -1,9 +1,6 @@
 import { ChartGlyph } from "@/components/charts/chart-glyphs";
 import {
-  CHART_BACKGROUNDS,
-  CHART_STYLES,
   CHART_TYPES,
-  type ChartBackgroundId,
   type ChartType,
 } from "@/components/charts/studio";
 import {
@@ -19,25 +16,21 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { motion } from "motion/react";
 import { Link } from "react-router-dom";
 
-type ChartsSidebarProps = {
-  chartType: ChartType;
-  styleId: string;
-  background: ChartBackgroundId;
-  onChartTypeChange: (type: ChartType) => void;
-  onStyleChange: (styleId: string) => void;
-  onBackgroundChange: (background: ChartBackgroundId) => void;
+export type BarColorState = {
+  primary: string;
+  secondary: string;
 };
 
+type ChartsSidebarProps = {
+  chartType: ChartType;
+  onChartTypeChange: (type: ChartType) => void;
+};
+
+/** Left rail: chart shape only. Look controls live on the right inspector. */
 export function ChartsSidebar({
   chartType,
-  styleId,
-  background,
   onChartTypeChange,
-  onStyleChange,
-  onBackgroundChange,
 }: ChartsSidebarProps) {
-  const styles = CHART_STYLES[chartType];
-
   return (
     <aside
       className="group/sidebar fixed top-0 bottom-0 left-0 z-50 flex items-stretch"
@@ -81,9 +74,16 @@ export function ChartsSidebar({
       </SidebarRail>
 
       <SidebarFlyout>
-        <SidebarBrand title="Studio" note="ink your export" />
+        <SidebarBrand title="Studio" note="pick a shape" />
 
-        <Section title="Chart type" tip="pick a shape">
+        <div className="mb-2 px-4">
+          <p className="font-display text-[10px] tracking-[0.2em] text-ink/50 uppercase">
+            Chart type
+          </p>
+          <p className="font-hand text-[11px] text-ink/35">left rail or here</p>
+        </div>
+
+        <div className="flex flex-col px-2">
           {CHART_TYPES.map((type) => (
             <button
               key={type.id}
@@ -97,76 +97,12 @@ export function ChartsSidebar({
               </span>
             </button>
           ))}
-        </Section>
-
-        <Section title="Style" tip="mood">
-          {styles.map((style) => (
-            <button
-              key={style.id}
-              type="button"
-              onClick={() => onStyleChange(style.id)}
-              className={flyoutLinkClass(styleId === style.id)}
-            >
-              {style.label}
-            </button>
-          ))}
-        </Section>
-
-        <Section title="Background" tip="paper or void">
-          <div className="grid grid-cols-2 gap-2 px-1">
-            {CHART_BACKGROUNDS.map((bg) => (
-              <button
-                key={bg.id}
-                type="button"
-                onClick={() => onBackgroundChange(bg.id)}
-                className={cn(
-                  "font-hand flex flex-col items-center gap-1.5 rounded-2xl border-2 px-2 py-2.5 text-xs transition-all",
-                  background === bg.id
-                    ? "border-ink bg-ink/10 text-ink -rotate-1 shadow-[2px_2px_0_rgba(17,17,17,0.12)]"
-                    : "border-ink/15 text-ink/65 hover:border-ink/40 hover:text-ink",
-                )}
-              >
-                <span
-                  className="size-8 rounded-full border border-ink/25"
-                  style={{
-                    background:
-                      bg.id === "transparent"
-                        ? "repeating-conic-gradient(#bbb 0% 25%, #eee 0% 50%) 50% / 8px 8px"
-                        : bg.preview,
-                  }}
-                />
-                {bg.label}
-              </button>
-            ))}
-          </div>
-        </Section>
+        </div>
 
         <p className="font-hand mt-auto px-4 pt-2 text-[11px] leading-snug text-ink/40">
-          hover the rail · export stays local ★
+          look controls sit on the right ★
         </p>
       </SidebarFlyout>
     </aside>
-  );
-}
-
-function Section({
-  title,
-  tip,
-  children,
-}: {
-  title: string;
-  tip: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="mb-4">
-      <div className="mb-2 flex items-baseline justify-between gap-2 px-4">
-        <p className="font-display text-[10px] tracking-[0.2em] text-ink/50 uppercase">
-          {title}
-        </p>
-        <p className="font-hand text-[11px] text-ink/35">{tip}</p>
-      </div>
-      <div className="flex flex-col px-2">{children}</div>
-    </div>
   );
 }

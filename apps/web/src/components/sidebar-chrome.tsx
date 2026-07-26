@@ -14,7 +14,7 @@ export function SidebarRail({
   return (
     <div
       className={cn(
-        "relative mt-5 mb-5 ml-5 flex w-20 shrink-0 flex-col items-center gap-1.5 overflow-hidden rounded-full border-2 border-ink/25 bg-paper/80 px-2 py-3.5 shadow-[3px_3px_0_rgba(17,17,17,0.08)] backdrop-blur-md",
+        "relative mt-5 mb-5 ml-10 flex w-20 shrink-0 flex-col items-center gap-1.5 overflow-hidden rounded-full border-2 border-ink/25 bg-paper/80 px-2 py-3.5 shadow-[3px_3px_0_rgba(17,17,17,0.08)] backdrop-blur-md",
         className,
       )}
     >
@@ -99,7 +99,7 @@ export function SidebarMark({ label = "F" }: { label?: string }) {
   return (
     <motion.div
       whileHover={{ rotate: -8, scale: 1.06 }}
-      className="relative mb-2 flex size-12 shrink-0 items-center justify-center rounded-full border-2 border-ink/30 bg-ink text-paper"
+      className="relative mb-2 flex size-11 shrink-0 items-center justify-center rounded-full border-2 border-ink/30 bg-ink text-paper"
     >
       <span className="font-display text-base leading-none tracking-wider">
         {label}
@@ -116,7 +116,7 @@ export function SidebarMark({ label = "F" }: { label?: string }) {
 
 export function railLinkClass(isActive: boolean) {
   return cn(
-    "relative flex size-12 items-center justify-center rounded-full transition-all duration-200",
+    "relative flex size-11 items-center justify-center rounded-full transition-all duration-200",
     isActive
       ? "bg-ink text-paper shadow-[2px_2px_0_rgba(17,17,17,0.2)] scale-105"
       : "text-ink/65 hover:bg-ink/10 hover:text-ink hover:-rotate-3",

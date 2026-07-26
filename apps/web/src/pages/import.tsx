@@ -7,8 +7,10 @@ import {
 } from "@funds/banks";
 import {
   applyMapping,
+  detectCurrency,
   extractPdfText,
   guessMapping,
+  KNOWN_CODES,
   parseCsvText,
   parsePdfTransactionsHeuristic,
   type ColumnMapping,
@@ -40,6 +42,7 @@ export function ImportPage() {
   const [pdfRows, setPdfRows] = useState<NormalizedRow[] | null>(null);
   const [mapping, setMapping] = useState<Partial<ColumnMapping>>({});
   const [detectedPreset, setDetectedPreset] = useState<string | null>(null);
+  const [currency, setCurrency] = useState("USD");
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -69,6 +72,13 @@ export function ImportPage() {
         setPreview(null);
         setPdfRows(rows);
         setDetectedPreset("generic-pdf");
+        setCurrency(
+          detectCurrency({
+            text: extracted.text,
+            filename: file.name,
+            presetCurrency: "USD",
+          }),
+        );
         if (!rows.length) {
           setError(
             "No transaction-like lines found in this PDF. Try a CSV export, or a text-based statement.",
@@ -90,6 +100,15 @@ export function ImportPage() {
     } else {
       setMapping(guessMapping(next.headers));
     }
+    setCurrency(
+      detectCurrency({
+        text,
+        headers: next.headers,
+        rows: next.rows,
+        filename: file.name,
+        presetCurrency: matched?.currency ?? null,
+      }),
+    );
   }
 
   function applyPreset(id: string) {
@@ -102,6 +121,15 @@ export function ImportPage() {
     }
     if (!preview) return;
     setMapping(resolveMappingForHeaders(preset, preview.headers));
+    setCurrency(
+      detectCurrency({
+        text: preview.rawText,
+        headers: preview.headers,
+        rows: preview.rows,
+        filename,
+        presetCurrency: preset.currency ?? null,
+      }),
+    );
   }
 
   async function onCommit() {
@@ -127,8 +155,10 @@ export function ImportPage() {
         setError("No valid rows after mapping. Check date/amount columns.");
         return;
       }
-      const count = await importRows(filename, rows, format);
-      setMessage(`Imported ${count} transactions. Opening charts…`);
+      const count = await importRows(filename, rows, format, currency);
+      setMessage(
+        `Imported ${count} transactions (${currency}). Opening charts…`,
+      );
       setPreview(null);
       setPdfRows(null);
       setFilename(null);
@@ -181,10 +211,26 @@ export function ImportPage() {
 
       {pdfRows ? (
         <div className="panel space-y-4 p-5">
-          <p className="text-sm text-muted-foreground">
-            PDF heuristic extracted {pdfRows.length} rows
-            {detectedPreset ? ` · preset ${detectedPreset}` : ""}.
-          </p>
+          <div className="flex flex-wrap items-end gap-3">
+            <p className="text-sm text-muted-foreground">
+              PDF heuristic extracted {pdfRows.length} rows
+              {detectedPreset ? ` · preset ${detectedPreset}` : ""}.
+            </p>
+            <label className="text-sm">
+              <span className="mb-1 block text-muted-foreground">Currency</span>
+              <select
+                className="control"
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value)}
+              >
+                {KNOWN_CODES.map((code) => (
+                  <option key={code} value={code}>
+                    {code}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
           <div className="overflow-x-auto rounded-2xl border border-border">
             <table className="min-w-full text-left text-xs">
               <thead className="bg-muted/80">
@@ -232,9 +278,24 @@ export function ImportPage() {
                 ))}
               </select>
             </label>
+            <label className="text-sm">
+              <span className="mb-1 block text-muted-foreground">Currency</span>
+              <select
+                className="control"
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value)}
+              >
+                {KNOWN_CODES.map((code) => (
+                  <option key={code} value={code}>
+                    {code}
+                  </option>
+                ))}
+              </select>
+            </label>
             <p className="text-sm text-muted-foreground">
               Preview rows mapped: {mappedCount} / {preview.rows.length}
               {detectedPreset ? ` · detected ${detectedPreset}` : ""}
+              {` · ${currency}`}
             </p>
           </div>
 

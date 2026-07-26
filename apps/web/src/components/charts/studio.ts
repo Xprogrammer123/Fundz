@@ -35,7 +35,11 @@ export const CHART_STYLES: Record<ChartType, ChartStyleOption[]> = {
     { id: "spotlight", label: "Spotlight" },
   ],
   bar: [{ id: "default", label: "Default" }],
-  line: [{ id: "default", label: "Default" }],
+  line: [
+    { id: "default", label: "Default" },
+    { id: "glow", label: "Glow" },
+    { id: "versus", label: "Versus" },
+  ],
   pie: [{ id: "default", label: "Default" }],
   composed: [{ id: "default", label: "Default" }],
   radar: [{ id: "default", label: "Default" }],

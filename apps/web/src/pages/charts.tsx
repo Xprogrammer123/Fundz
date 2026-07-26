@@ -15,7 +15,7 @@ import {
 import type { ChartViewProps } from "@/components/charts/types";
 import type { ChartConfig } from "@/components/evilcharts/ui/echarts-chart";
 import { useVault } from "@/db/vault";
-import { CHART_PALETTE, seriesColors } from "@/lib/mono";
+import { CHART_PALETTE, MONO, seriesColors } from "@/lib/mono";
 import { formatMoney } from "@/lib/utils";
 import {
   aggregateByPeriod,
@@ -60,13 +60,18 @@ export function ChartsPage() {
   const { chartSession, account } = useVault();
   const transactions = chartSession?.transactions ?? [];
   const hasUpload = transactions.length > 0;
-  const currency = account?.currency ?? "USD";
+  const currency =
+    chartSession?.currency ?? account?.currency ?? "USD";
 
   const years = useMemo(() => listYears(transactions), [transactions]);
   const [grain, setGrain] = useState<PeriodGrain>("month");
   const [chartType, setChartType] = useState<ChartType>("area");
   const [styleId, setStyleId] = useState(defaultStyleFor("area"));
   const [background, setBackground] = useState<ChartBackgroundId>("black");
+  const [barColors, setBarColors] = useState<{ primary: string; secondary: string }>({
+    primary: MONO.gray500,
+    secondary: MONO.black,
+  });
   const [metric, setMetric] = useState<Metric>("expense");
   const [year, setYear] = useState<string>("");
   const [month, setMonth] = useState<string>("all");
@@ -187,6 +192,8 @@ export function ChartsPage() {
     metric,
     styleId,
     background,
+    currency,
+    barColors,
   };
 
   function handleChartTypeChange(type: ChartType) {
@@ -214,9 +221,11 @@ export function ChartsPage() {
         chartType={chartType}
         styleId={styleId}
         background={background}
+        barColors={barColors}
         onChartTypeChange={handleChartTypeChange}
         onStyleChange={setStyleId}
         onBackgroundChange={setBackground}
+        onBarColorsChange={setBarColors}
       />
 
       <div className="space-y-6">
@@ -284,6 +293,7 @@ export function ChartsPage() {
         <p className="text-sm text-muted-foreground">
           {formatMoney(totals.expense, currency)} spent ·{" "}
           {formatMoney(totals.income, currency)} in
+          <span className="text-ink/45"> · {currency}</span>
         </p>
 
         <View {...viewProps} />

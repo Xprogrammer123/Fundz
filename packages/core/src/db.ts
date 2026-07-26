@@ -295,6 +295,13 @@ export class FundsDb {
     ]);
   }
 
+  updateAccountCurrency(accountId: string, currency: string): void {
+    this.db.run("UPDATE accounts SET currency = ? WHERE id = ?", [
+      currency,
+      accountId,
+    ]);
+  }
+
   monthlyCashflow(): MonthlyCashflow[] {
     const result = this.db.exec(`
       SELECT

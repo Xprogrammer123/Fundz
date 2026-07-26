@@ -12,3 +12,13 @@ export function formatMoney(value: number, currency = "USD"): string {
     maximumFractionDigits: 2,
   }).format(value);
 }
+
+/** Compact axis labels that still show the statement currency. */
+export function formatAxisMoney(value: number, currency = "USD"): string {
+  return new Intl.NumberFormat(undefined, {
+    style: "currency",
+    currency,
+    notation: "compact",
+    maximumFractionDigits: 1,
+  }).format(value);
+}

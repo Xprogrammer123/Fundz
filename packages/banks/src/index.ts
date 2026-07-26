@@ -8,6 +8,8 @@ export type BankPreset = {
   mapping: ColumnMapping;
   /** Alternate header labels accepted when auto-matching */
   aliases?: Partial<Record<keyof ColumnMapping, string[]>>;
+  /** Default ISO currency when the file has no currency markers */
+  currency?: string;
   samplePath?: string;
   notes?: string;
 };
@@ -43,6 +45,7 @@ export const BANK_PRESETS: BankPreset[] = [
     id: "chase-csv",
     name: "Chase (CSV export)",
     format: "csv",
+    currency: "USD",
     mapping: {
       date: "Posting Date",
       description: "Description",
@@ -64,6 +67,7 @@ export const BANK_PRESETS: BankPreset[] = [
     id: "hsbc-uk-csv",
     name: "HSBC UK (CSV export)",
     format: "csv",
+    currency: "GBP",
     mapping: {
       date: "Date",
       description: "Description",
@@ -83,6 +87,7 @@ export const BANK_PRESETS: BankPreset[] = [
     id: "gtbank-csv",
     name: "GTBank (CSV export)",
     format: "csv",
+    currency: "NGN",
     mapping: {
       date: "Trans Date",
       description: "Remarks",
