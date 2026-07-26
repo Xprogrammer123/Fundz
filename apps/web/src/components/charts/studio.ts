@@ -34,7 +34,12 @@ export const CHART_STYLES: Record<ChartType, ChartStyleOption[]> = {
     { id: "benchmark", label: "Benchmark" },
     { id: "spotlight", label: "Spotlight" },
   ],
-  bar: [{ id: "default", label: "Default" }],
+  bar: [
+    { id: "default", label: "Default" },
+    { id: "peak", label: "Peak" },
+    { id: "grid", label: "Grid" },
+    { id: "mono", label: "Mono" },
+  ],
   line: [
     { id: "default", label: "Default" },
     { id: "glow", label: "Glow" },

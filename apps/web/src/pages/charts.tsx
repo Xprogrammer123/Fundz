@@ -1,5 +1,6 @@
 import { AreaChartView } from "@/components/charts/area-view";
 import { BarChartView } from "@/components/charts/bar-view";
+import { ChartsInspector } from "@/components/charts/charts-inspector";
 import { ChartsSidebar } from "@/components/charts/charts-sidebar";
 import { ComposedChartView } from "@/components/charts/composed-view";
 import { LineChartView } from "@/components/charts/line-view";
@@ -219,84 +220,91 @@ export function ChartsPage() {
     <>
       <ChartsSidebar
         chartType={chartType}
-        styleId={styleId}
-        background={background}
-        barColors={barColors}
         onChartTypeChange={handleChartTypeChange}
-        onStyleChange={setStyleId}
-        onBackgroundChange={setBackground}
-        onBarColorsChange={setBarColors}
       />
 
-      <div className="space-y-6">
-        <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <Field label="Show">
-            <select
-              value={metric}
-              onChange={(e) => setMetric(e.target.value as Metric)}
-              className="control"
-            >
-              <option value="expense">Spending</option>
-              <option value="income">Income</option>
-              <option value="both">Income vs spending</option>
-              <option value="category">By category</option>
-            </select>
-          </Field>
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
+        <div className="min-w-0 flex-1 space-y-6">
+          <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <Field label="Show">
+              <select
+                value={metric}
+                onChange={(e) => setMetric(e.target.value as Metric)}
+                className="control"
+              >
+                <option value="expense">Spending</option>
+                <option value="income">Income</option>
+                <option value="both">Income vs spending</option>
+                <option value="category">By category</option>
+              </select>
+            </Field>
 
-          <Field label="Group">
-            <select
-              value={grain}
-              onChange={(e) => setGrain(e.target.value as PeriodGrain)}
-              className="control"
-            >
-              <option value="day">Day</option>
-              <option value="month">Month</option>
-              <option value="year">Year</option>
-            </select>
-          </Field>
+            <Field label="Group">
+              <select
+                value={grain}
+                onChange={(e) => setGrain(e.target.value as PeriodGrain)}
+                className="control"
+              >
+                <option value="day">Day</option>
+                <option value="month">Month</option>
+                <option value="year">Year</option>
+              </select>
+            </Field>
 
-          <Field label="Year">
-            <select
-              value={year}
-              onChange={(e) => {
-                setYear(e.target.value);
-                setMonth("all");
-              }}
-              className="control"
-            >
-              <option value="all">All years</option>
-              {years.map((y) => (
-                <option key={y} value={y}>
-                  {y}
-                </option>
-              ))}
-            </select>
-          </Field>
+            <Field label="Year">
+              <select
+                value={year}
+                onChange={(e) => {
+                  setYear(e.target.value);
+                  setMonth("all");
+                }}
+                className="control"
+              >
+                <option value="all">All years</option>
+                {years.map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
+              </select>
+            </Field>
 
-          <Field label="Month">
-            <select
-              value={month}
-              onChange={(e) => setMonth(e.target.value)}
-              className="control"
-              disabled={grain === "year" || year === "all" || !year}
-            >
-              <option value="all">All months</option>
-              {months.map((m) => (
-                <option key={m} value={m}>
-                  {MONTH_LABELS[m] ?? m}
-                </option>
-              ))}
-            </select>
-          </Field>
-        </section>
+            <Field label="Month">
+              <select
+                value={month}
+                onChange={(e) => setMonth(e.target.value)}
+                className="control"
+                disabled={grain === "year" || year === "all" || !year}
+              >
+                <option value="all">All months</option>
+                {months.map((m) => (
+                  <option key={m} value={m}>
+                    {MONTH_LABELS[m] ?? m}
+                  </option>
+                ))}
+              </select>
+            </Field>
+          </section>
 
-        <p className="text-sm text-muted-foreground">
-          {formatMoney(totals.expense, currency)} spent ·{" "}
-          {formatMoney(totals.income, currency)} in
-          <span className="text-ink/45"> · {currency}</span>
-        </p>
+          <p className="text-sm text-muted-foreground">
+            {formatMoney(totals.expense, currency)} spent ·{" "}
+            {formatMoney(totals.income, currency)} in
+            <span className="text-ink/45"> · {currency}</span>
+          </p>
 
-        <View {...viewProps} />
+          <View {...viewProps} />
+        </div>
+
+        <ChartsInspector
+          chartType={chartType}
+          styleId={styleId}
+          background={background}
+          barColors={barColors}
+          currency={currency}
+          onStyleChange={setStyleId}
+          onBackgroundChange={setBackground}
+          onBarColorsChange={setBarColors}
+        />
       </div>
     </>
   );
