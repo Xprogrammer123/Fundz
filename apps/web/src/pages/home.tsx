@@ -11,7 +11,6 @@ export function HomePage() {
 
   return (
     <div className="space-y-20">
-      {/* Full-bleed poster composition — copy lives in corners, brand owns the center */}
       <section className="relative min-h-[calc(100dvh-5rem)] w-full">
         {/* TOP LEFT */}
         <motion.p
@@ -34,48 +33,33 @@ export function HomePage() {
           <span className="mt-1 block tracking-[0.2em] text-ink/50">2026</span>
         </motion.p>
 
-        {/* CENTER — brand spans the field */}
+        {/* CENTER — readable brand on one line */}
         <motion.h1
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
-          className="font-display absolute top-1/2 left-1/2 w-[min(100%,52rem)] -translate-x-1/2 -translate-y-[55%] text-center text-ink"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="font-display absolute top-[42%] left-1/2 w-[min(100%,56rem)] -translate-x-1/2 -translate-y-1/2 text-center text-[clamp(3.5rem,14vw,9rem)] leading-none tracking-[-0.03em] text-ink"
         >
-          <span className="block text-[clamp(4.5rem,18vw,11rem)] leading-[0.82] tracking-[-0.04em]">
-            FUN
-          </span>
-          <span className="relative mt-1 block text-[clamp(4.5rem,18vw,11rem)] leading-[0.82] tracking-[-0.04em]">
-            <span className="relative inline-block">
-              <span
-                aria-hidden
-                className="absolute -top-[0.92em] left-[0.12em] h-[1.85em] w-[0.1em] bg-ink"
-              />
-              <span className="relative">D</span>
-            </span>
-            <span>S</span>
-          </span>
+          Funds
         </motion.h1>
 
-        {/* MID-LEFT — hand note pointing into the mark */}
+        {/* MID-LEFT */}
         <motion.div
           initial={{ opacity: 0, x: -12 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.3, duration: 0.5 }}
-          className="font-hand absolute top-[38%] left-0 z-10 max-w-[11rem] text-base leading-snug text-ink sm:top-[34%] sm:max-w-[13rem] sm:text-lg"
+          className="font-hand absolute top-[28%] left-0 z-10 max-w-[11rem] text-base leading-snug text-ink sm:max-w-[13rem] sm:text-lg"
         >
-          <HandArrow
-            direction="up-right"
-            className="mb-1 h-12 rotate-12"
-          />
+          <HandArrow direction="up-right" className="mb-1 h-12 rotate-12" />
           your vault never leaves this tab
         </motion.div>
 
-        {/* MID-RIGHT — second hand note */}
+        {/* MID-RIGHT */}
         <motion.div
           initial={{ opacity: 0, x: 12 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.38, duration: 0.5 }}
-          className="font-hand absolute top-[42%] right-0 z-10 max-w-[10rem] text-right text-base leading-snug text-ink sm:max-w-[12rem] sm:text-lg"
+          className="font-hand absolute top-[30%] right-0 z-10 max-w-[10rem] text-right text-base leading-snug text-ink sm:max-w-[12rem] sm:text-lg"
         >
           <span className="inline-flex flex-col items-end">
             <HandArrowScribble className="mb-1 scale-x-[-1]" />
@@ -83,7 +67,7 @@ export function HomePage() {
           </span>
         </motion.div>
 
-        {/* BOTTOM LEFT — supporting line */}
+        {/* BOTTOM LEFT */}
         <motion.p
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -93,7 +77,7 @@ export function HomePage() {
           Drop a statement. Nothing is uploaded. Airplane mode still works.
         </motion.p>
 
-        {/* BOTTOM RIGHT — CTAs */}
+        {/* BOTTOM RIGHT */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -114,31 +98,6 @@ export function HomePage() {
               ? "open charts →"
               : "import to chart →"}
           </Link>
-        </motion.div>
-
-        {/* BOTTOM CENTER — quiet ledger atmosphere */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.55, duration: 0.6 }}
-          className="pointer-events-none absolute inset-x-0 bottom-0 hidden justify-center md:flex"
-          aria-hidden
-        >
-          <svg
-            viewBox="0 0 640 40"
-            className="w-full max-w-xl text-ink/15"
-            fill="none"
-          >
-            {[8, 20, 32].map((y, i) => (
-              <path
-                key={y}
-                d={`M40 ${y} H ${600 - i * 40}`}
-                stroke="currentColor"
-                strokeWidth="1.2"
-                strokeLinecap="round"
-              />
-            ))}
-          </svg>
         </motion.div>
       </section>
 
