@@ -28,7 +28,7 @@ Funds is a **local-first** bank statement analyzer. You import CSV/PDF statement
 - **Home** — product positioning and trust summary
 - **Import** — CSV/PDF wizard; auto-navigates to Transactions after success
 - **Transactions** — search, edit categories, Excel export
-- **Charts** — bar/line/area/pie/composed/radar/radial/sankey + period filters + image export
+- **Charts** — bar/line/area/pie/composed/radar/sankey + period filters + image export
 - **Docs** — in-app documentation (`/docs`)
 - **Settings** — passphrase, wipe local data
 
@@ -50,7 +50,7 @@ Each chart type is isolated so you can paste style variants later:
 
 - `apps/web/src/components/charts/bar-view.tsx`
 - `line-view.tsx`, `area-view.tsx`, `pie-view.tsx`
-- `composed-view.tsx`, `radar-view.tsx`, `radial-view.tsx`, `sankey-view.tsx`
+- `composed-view.tsx`, `radar-view.tsx`, `sankey-view.tsx`
 - Shared shell + PNG/JPG export: `chart-shell.tsx`, `export-chart-image.ts`
 
 EvilCharts components live under `apps/web/src/components/evilcharts/`.

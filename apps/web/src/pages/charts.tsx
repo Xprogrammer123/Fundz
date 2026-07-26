@@ -6,7 +6,6 @@ import { ComposedChartView } from "@/components/charts/composed-view";
 import { LineChartView } from "@/components/charts/line-view";
 import { PieChartView } from "@/components/charts/pie-view";
 import { RadarChartView } from "@/components/charts/radar-view";
-import { RadialChartView } from "@/components/charts/radial-view";
 import { SankeyChartView } from "@/components/charts/sankey-view";
 import {
   defaultStyleFor,
@@ -53,7 +52,6 @@ const VIEW_MAP: Record<ChartType, ComponentType<ChartViewProps>> = {
   pie: PieChartView,
   composed: ComposedChartView,
   radar: RadarChartView,
-  radial: RadialChartView,
   sankey: SankeyChartView,
 };
 

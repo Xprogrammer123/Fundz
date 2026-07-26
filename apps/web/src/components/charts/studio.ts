@@ -5,7 +5,6 @@ export type ChartType =
   | "pie"
   | "composed"
   | "radar"
-  | "radial"
   | "sankey";
 
 export type ChartBackgroundId = "black" | "white" | "paper" | "transparent";
@@ -22,7 +21,6 @@ export const CHART_TYPES: { id: ChartType; label: string }[] = [
   { id: "pie", label: "Pie" },
   { id: "composed", label: "Composed" },
   { id: "radar", label: "Radar" },
-  { id: "radial", label: "Radial" },
   { id: "sankey", label: "Sankey" },
 ];
 
@@ -45,7 +43,13 @@ export const CHART_STYLES: Record<ChartType, ChartStyleOption[]> = {
     { id: "glow", label: "Glow" },
     { id: "versus", label: "Versus" },
   ],
-  pie: [{ id: "default", label: "Default" }],
+  pie: [
+    { id: "default", label: "Default" },
+    { id: "share", label: "Share" },
+    { id: "rings", label: "Rings" },
+    { id: "mix", label: "Mix" },
+    { id: "gauge", label: "Gauge" },
+  ],
   composed: [
     { id: "default", label: "Default" },
     { id: "hatched", label: "Hatched" },
@@ -54,7 +58,6 @@ export const CHART_STYLES: Record<ChartType, ChartStyleOption[]> = {
     { id: "spectrum", label: "Spectrum" },
   ],
   radar: [{ id: "default", label: "Default" }],
-  radial: [{ id: "default", label: "Default" }],
   sankey: [{ id: "default", label: "Default" }],
 };
 

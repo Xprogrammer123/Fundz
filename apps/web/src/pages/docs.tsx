@@ -129,7 +129,7 @@ export function DocsPage() {
         <ul>
           <li>Bar, Line, Area, Pie</li>
           <li>Composed (bars + net line)</li>
-          <li>Radar, Radial</li>
+          <li>Radar</li>
           <li>Sankey (income → spending → categories)</li>
         </ul>
         <p>Controls:</p>
