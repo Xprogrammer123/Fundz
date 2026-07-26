@@ -298,9 +298,9 @@ export function ChartsPage() {
             ))}
           </div>
           <p className="mt-2 text-xs text-muted-foreground">
-            Each chart type lives in its own file under{" "}
-            <code className="text-ink">src/components/charts/</code> so you can
-            paste EvilCharts style variants later.
+            Area charts include four style variants (Layers, Compare, Benchmark,
+            Spotlight). Other types live under{" "}
+            <code className="text-ink">src/components/charts/</code>.
           </p>
         </div>
       </section>
