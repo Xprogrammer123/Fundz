@@ -1,5 +1,8 @@
 packages:
   - "apps/*"
   - "packages/*"
-allowBuilds:
-  esbuild: false
+
+# pnpm 10+/11: which packages may run install scripts (Vite needs esbuild)
+onlyBuiltDependencies:
+  - esbuild
+  - sharp

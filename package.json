@@ -4,15 +4,14 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "pnpm --filter @funds/web dev",
-    "build": "pnpm --filter @funds/core build && pnpm --filter @funds/web build && pnpm --filter @funds/extension build",
-    "build:web": "pnpm --filter @funds/core build && pnpm --filter @funds/web build",
-    "build:extension": "pnpm --filter @funds/extension build",
+    "build": "pnpm --filter @funds/core build && pnpm --filter @funds/banks build && pnpm --filter @funds/web build && pnpm --filter @funds/extension build",
+    "build:web": "pnpm --filter @funds/core build && pnpm --filter @funds/banks build && pnpm --filter @funds/web build",
+    "build:extension": "pnpm --filter @funds/core build && pnpm --filter @funds/banks build && pnpm --filter @funds/extension build",
+    "start": "pnpm --filter @funds/web start",
+    "vercel-build": "pnpm build:web",
     "lint": "pnpm -r lint"
   },
   "engines": {
     "node": ">=20"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": ["esbuild", "sharp"]
   }
 }

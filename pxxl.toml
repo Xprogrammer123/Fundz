@@ -1,0 +1,18 @@
+# Pxxl deploy config — Vite SPA monorepo (Fundz)
+# Docs: https://docs.pxxl.app/api/pxxl-toml.md
+
+[build]
+language = "javascript"
+framework = "vite"
+packageManager = "pnpm"
+nodeVersion = "20"
+installCommand = "pnpm install --frozen-lockfile"
+# Core + web only (skip the browser extension on the host)
+buildCommand = "pnpm build:web"
+# Static SPA output — leave start empty so Pxxl serves dist with SPA fallback
+outputDirectory = "apps/web/dist"
+startCommand = ""
+port = 8080
+
+[env]
+NODE_ENV = "production"
