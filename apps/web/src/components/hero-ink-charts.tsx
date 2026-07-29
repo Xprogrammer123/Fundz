@@ -15,7 +15,7 @@ export function InkBars({
   return (
     <div
       className={cn(
-        "flex h-full min-h-[7rem] w-full items-end justify-start gap-1 sm:min-h-[12rem] sm:gap-1.5 md:gap-2.5",
+        "flex h-full min-h-[7rem] w-full items-end justify-center gap-1.5 sm:min-h-[12rem] sm:gap-2 md:gap-2.5",
         className,
       )}
       aria-hidden
@@ -25,7 +25,7 @@ export function InkBars({
         return (
           <motion.div
             key={i}
-            className="w-1.5 origin-bottom bg-ink sm:w-[7px] md:w-2.5"
+            className="min-w-0 flex-1 origin-bottom bg-ink"
             style={{ height: `${pct}%` }}
             initial={{ scaleY: 0, opacity: 0 }}
             animate={{ scaleY: 1, opacity: 1 }}

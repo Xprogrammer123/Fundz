@@ -65,7 +65,7 @@ export function HomePage() {
           </p>
         </div>
 
-        <div className="mx-auto h-36 w-full max-w-xs">
+        <div className="mx-auto h-40 w-full max-w-sm">
           <InkBars values={POSTER_BARS.slice(0, 10)} />
           <p className="font-hand mt-1 text-center text-sm text-ink/60">spend</p>
         </div>
