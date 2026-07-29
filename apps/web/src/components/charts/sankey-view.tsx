@@ -213,7 +213,7 @@ function PipelineStyle({
       </EChartsSankeyChart>
 
       <div className="pointer-events-none absolute inset-0 flex items-stretch justify-center">
-        <div className="flex h-full flex-col items-center justify-center bg-[linear-gradient(to_right,transparent_0%,var(--background)_32%,var(--background)_68%,transparent_100%)] px-10 sm:px-14">
+        <div className="flex h-full flex-col items-center justify-center bg-[linear-gradient(to_right,transparent_0%,var(--background)_32%,var(--background)_68%,transparent_100%)] px-4 sm:px-10 md:px-14">
           <span className="text-muted-foreground text-[11px] sm:text-xs">Total booked</span>
           <span className="text-primary text-2xl leading-none font-semibold tracking-tight sm:text-4xl">
             {formatMoney(total, currency)}

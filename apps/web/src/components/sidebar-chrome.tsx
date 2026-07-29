@@ -14,7 +14,7 @@ export function SidebarRail({
   return (
     <div
       className={cn(
-        "relative mt-5 mb-5 ml-10 flex w-20 shrink-0 flex-col items-center gap-1.5 overflow-hidden rounded-full border-2 border-ink/25 bg-paper/80 px-2 py-3.5 shadow-[3px_3px_0_rgba(17,17,17,0.08)] backdrop-blur-md",
+        "relative mt-5 mb-5 ml-4 flex w-16 shrink-0 flex-col items-center gap-1.5 overflow-hidden rounded-full border-2 border-ink/25 bg-paper/80 px-1.5 py-3 shadow-[3px_3px_0_rgba(17,17,17,0.08)] backdrop-blur-md sm:ml-6 md:ml-10 md:w-20 md:px-2 md:py-3.5",
         className,
       )}
     >

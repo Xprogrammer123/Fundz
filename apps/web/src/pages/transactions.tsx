@@ -63,14 +63,14 @@ export function TransactionsPage() {
             {account ? ` · ${account.currency}` : ""}
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap">
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search…"
-            className="control text-sm"
+            className="control w-full text-sm sm:min-w-[12rem] sm:flex-1"
           />
-          <Button variant="outline" onClick={exportExcel} disabled={!transactions.length}>
+          <Button variant="outline" onClick={exportExcel} disabled={!transactions.length} className="w-full sm:w-auto">
             Export Excel
           </Button>
         </div>
@@ -100,7 +100,7 @@ export function TransactionsPage() {
                     <input
                       defaultValue={t.category ?? ""}
                       placeholder="Uncategorized"
-                      className="w-36 rounded-lg border border-transparent bg-transparent px-2 py-1 hover:border-border focus:border-border focus:bg-paper focus:outline-none"
+                      className="w-full min-w-[7rem] max-w-[10rem] rounded-lg border border-transparent bg-transparent px-2 py-1 hover:border-border focus:border-border focus:bg-paper focus:outline-none"
                       onBlur={(e) => {
                         const next = e.target.value.trim() || null;
                         if (next !== (t.category ?? null)) {

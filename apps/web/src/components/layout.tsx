@@ -27,7 +27,7 @@ const baseLinks = [
   { to: "/import", label: "Import", icon: Upload04Icon, hint: "CSV →" },
   {
     to: "/transactions",
-    label: "Transactions",
+    label: "Txns",
     icon: TransactionHistoryIcon,
     hint: "rows",
   },
@@ -47,11 +47,15 @@ export function AppLayout() {
     ? baseLinks
     : baseLinks.filter((link) => link.to !== "/charts");
 
+  // Bottom bar on phones
+  const mobileLinks = links;
+
   return (
-    <div className="relative min-h-dvh w-full">
+    <div className="relative min-h-dvh w-full overflow-x-hidden">
+      {/* Desktop left rail */}
       {!isChartsStudio ? (
         <aside
-          className="group/sidebar fixed top-0 bottom-0 left-0 z-50 flex items-stretch"
+          className="group/sidebar fixed top-0 bottom-0 left-0 z-50 hidden items-stretch md:flex"
           aria-label="Main navigation"
         >
           <SidebarRail>
@@ -64,7 +68,7 @@ export function AppLayout() {
               <span className="sr-only">Funds home</span>
             </Link>
 
-            <nav className="relative z-10 flex flex-1 flex-col items-center gap-1.5 mt-8">
+            <nav className="relative z-10 mt-8 flex flex-1 flex-col items-center gap-1.5 overflow-y-auto">
               {links.map((link, i) => (
                 <motion.div
                   key={link.to}
@@ -106,7 +110,7 @@ export function AppLayout() {
                   className={({ isActive }) => flyoutLinkClass(isActive)}
                 >
                   <span className="flex items-center justify-between gap-2">
-                    <span>{link.label}</span>
+                    <span>{link.label === "Txns" ? "Transactions" : link.label}</span>
                     <span className="text-xs opacity-60">{link.hint}</span>
                   </span>
                 </NavLink>
@@ -127,20 +131,58 @@ export function AppLayout() {
         </aside>
       ) : null}
 
+      {/* Mobile bottom tab bar */}
+      {!isChartsStudio ? (
+        <nav
+          className="fixed inset-x-0 bottom-0 z-50 border-t-2 border-ink/20 bg-paper/95 px-2 pt-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur-md md:hidden"
+          aria-label="Mobile navigation"
+        >
+          <ul className="mx-auto flex max-w-lg items-stretch justify-between gap-0.5">
+            {mobileLinks.map((link) => (
+              <li key={link.to} className="min-w-0 flex-1">
+                <NavLink
+                  to={link.to}
+                  end={"end" in link ? link.end : false}
+                  className={({ isActive }) =>
+                    cn(
+                      "font-hand flex flex-col items-center gap-0.5 rounded-2xl px-1 py-1.5 text-[10px] transition-colors",
+                      isActive
+                        ? "bg-ink text-paper"
+                        : "text-ink/60 active:bg-ink/8",
+                    )
+                  }
+                >
+                  <HugeiconsIcon
+                    icon={link.icon}
+                    size={18}
+                    strokeWidth={1.6}
+                    aria-hidden
+                  />
+                  <span className="truncate">{link.label}</span>
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      ) : null}
+
       <div
         className={cn(
-          "mx-auto flex min-h-dvh w-full max-w-6xl flex-col px-4 pt-6 pb-24 sm:px-6 lg:px-8",
-          isChartsStudio && "max-w-7xl",
-          "pl-[6.5rem] sm:pl-28",
+          "mx-auto flex min-h-dvh w-full max-w-6xl flex-col px-4 pt-4 sm:px-6 sm:pt-6 lg:px-8",
+          // Room for bottom tabs on phones; left rail only from md up
+          "pb-[calc(5.25rem+env(safe-area-inset-bottom))] md:pb-10",
+          isChartsStudio
+            ? "max-w-7xl pb-8 pl-4 sm:pl-6 md:pl-28"
+            : "md:pl-28",
         )}
       >
         {!isChartsStudio && !isHome ? (
-          <header className="mb-8">
-            <p className="font-display text-6xl leading-none text-ink sm:text-7xl md:text-8xl">
+          <header className="mb-6 sm:mb-8">
+            <p className="font-display text-4xl leading-none text-ink sm:text-6xl md:text-7xl lg:text-8xl">
               Funds
             </p>
-            <p className="font-hand mt-3 flex items-start gap-2 text-xl text-ink-soft">
-              <HandArrowScribble className="mt-1" />
+            <p className="font-hand mt-2 flex items-start gap-2 text-base text-ink-soft sm:mt-3 sm:text-xl">
+              <HandArrowScribble className="mt-1 hidden sm:inline" />
               <span>
                 Processing happens only on your device. We never receive your
                 statements.
@@ -149,7 +191,7 @@ export function AppLayout() {
           </header>
         ) : null}
         {!isChartsStudio ? <OfflineBadge /> : null}
-        <main className="flex-1">
+        <main className="min-w-0 flex-1">
           <Outlet />
         </main>
       </div>

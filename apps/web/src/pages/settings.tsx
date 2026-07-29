@@ -80,7 +80,7 @@ export function SettingsPage() {
             placeholder="New passphrase"
             className="control"
           />
-          <Button type="submit" disabled={busy}>
+          <Button type="submit" disabled={busy} className="w-full sm:w-auto">
             {busy ? "Saving…" : "Update encryption"}
           </Button>
         </form>

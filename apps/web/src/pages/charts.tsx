@@ -328,14 +328,15 @@ export function ChartsPage() {
             </Field>
           </section>
 
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm leading-relaxed text-muted-foreground break-words">
             {totals.count.toLocaleString()} rows ·{" "}
             {formatMoney(totals.expense, currency)} spent ·{" "}
             {formatMoney(totals.income, currency)} in
             <span className="text-ink/45"> · {currency}</span>
-            <span className="text-ink/45">
+            <span className="mt-1 block text-ink/45 sm:mt-0 sm:inline">
               {" "}
-              · {periodData.length} {grain === "day" ? "days" : grain === "month" ? "months" : "years"}
+              · {periodData.length}{" "}
+              {grain === "day" ? "days" : grain === "month" ? "months" : "years"}
             </span>
           </p>
 
