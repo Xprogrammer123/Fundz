@@ -31,12 +31,12 @@ export function HomePage() {
       */}
       <section className="relative aspect-[1024/680] w-full min-h-[24rem] overflow-hidden sm:min-h-[32rem]">
         {/* Bottom area chart — full width light wash */}
-        <div className="pointer-events-none absolute inset-x-[-1%] bottom-0 z-[1] h-[40%]">
+        <div className="pointer-events-none absolute inset-x-[-1%] bottom-0 z-[1] h-[34%]">
           <InkArea points={POSTER_AREA} className="h-full w-full" />
         </div>
 
         {/* Mid-left bars */}
-        <div className="pointer-events-none absolute top-[30%] left-0 z-[2] flex h-[30%] w-[44%] max-w-[18rem] flex-col sm:left-1 sm:w-[30%] sm:max-w-[17rem]">
+        <div className="pointer-events-none absolute top-[38%] left-0 z-[2] flex h-[38%] w-[48%] max-w-[20rem] flex-col sm:left-1 sm:w-[34%] sm:max-w-[19rem]">
           <div className="min-h-0 flex-1">
             <InkBars values={POSTER_BARS} />
           </div>
@@ -107,14 +107,14 @@ export function HomePage() {
             </span>
           </h1>
 
-          <div className="relative mx-auto mt-1 w-[min(85%,18rem)]">
+          <div className="relative mx-auto mt-4 w-[min(85%,18rem)]">
             <InkSparkline points={POSTER_SPARK} className="h-10 w-full" />
             <p className="font-hand absolute -right-1 bottom-0 text-[11px] text-ink/55 sm:text-xs">
               cashflow →
             </p>
           </div>
 
-          <p className="mt-3.5 text-[13px] tracking-wide text-ink/80 sm:text-sm">
+          <p className="mt-4 text-[13px] tracking-wide text-ink/80 sm:text-sm">
             statements become charts — on this machine only
           </p>
         </div>
